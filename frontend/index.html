@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Nauman Tariq — Full Stack Developer, AI Engineer, AI Automation Expert, React Native Developer." />
+  <meta name="robots" content="index, follow" />
+  <title>Nauman Tariq — AI Powered Portfolio</title>
+
+  <!-- Bootstrap 5 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <!-- AOS -->
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css" />
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+</head>
+<body>
+
+  <!-- ========== PRELOADER ========== -->
+  <div id="preloader">
+    <div class="preloader-content">
+      <h1 class="preloader-name">Nauman Tariq</h1>
+      <div class="preloader-spinner"></div>
+    </div>
+  </div>
+
+  <!-- ========== NAVBAR ========== -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="#home">Nauman Tariq</a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="#skills">Skills</a></li>
+          <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
+          <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
+          <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========== HERO SECTION ========== -->
+  <section id="home" class="hero-section">
+    <div class="container">
+      <div class="row align-items-center hero-row">
+        <!-- Left Side: full width on mobile, half on desktop -->
+        <div class="col-12 col-lg-6 hero-left" data-aos="fade-right">
+          <p class="hero-greeting">Hello, I'm</p>
+          <h1 class="hero-name">Nauman Tariq</h1>
+          <h2 class="hero-title">
+            I'm a <span id="typewriter-text" class="typewriter-text"></span><span class="typewriter-cursor">|</span>
+          </h2>
+          <p class="hero-desc">
+            A passionate developer building cutting-edge web applications, AI agents, and automation systems that solve real-world problems.
+          </p>
+          <div class="hero-buttons d-flex flex-wrap gap-3 mt-4">
+            <a href="#projects" class="btn btn-primary-custom">View Projects</a>
+            <a href="assets/resume.pdf" class="btn btn-outline-custom" download>
+              <i class="bi bi-download me-2"></i>Download Resume
+            </a>
+          </div>
+          <div class="hero-social mt-4 d-flex gap-3">
+            <a href="https://github.com" target="_blank" class="social-icon"><i class="bi bi-github"></i></a>
+            <a href="https://linkedin.com" target="_blank" class="social-icon"><i class="bi bi-linkedin"></i></a>
+            <a href="mailto:nauman@email.com" class="social-icon"><i class="bi bi-envelope"></i></a>
+          </div>
+        </div>
+        <!-- Right Side: hidden on mobile (< lg), visible on desktop -->
+        <div class="col-lg-6 d-none d-lg-flex hero-right justify-content-center">
+          <div class="hero-image-wrapper">
+            <div class="hero-image-glow"></div>
+            <img src="assets/images/profile.jpg" alt="Nauman Tariq" class="hero-image" onerror="this.src='https://placehold.co/400x400/111111/FFFFFF?text=Nauman+Tariq'" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Scroll Indicator -->
+    <a href="#about" class="scroll-indicator">
+      <i class="bi bi-chevron-down"></i>
+    </a>
+  </section>
+
+  <!-- ========== ABOUT SECTION ========== -->
+  <section id="about" class="section-padding">
+    <div class="container">
+      <div class="section-header text-center mb-5" data-aos="fade-up">
+        <h2 class="section-title">About Me</h2>
+        <div class="section-line"></div>
+      </div>
+      <div class="row align-items-start g-4">
+        <!-- Profile Image — Desktop Only -->
+        <div class="col-lg-4 about-image-col d-none d-lg-flex justify-content-center" data-aos="fade-right">
+          <div class="about-image-wrapper">
+            <img src="assets/images/profile.jpg" alt="Nauman Tariq" class="about-image" onerror="this.src='https://placehold.co/380x450/111111/FFFFFF?text=Nauman+Tariq'" />
+          </div>
+        </div>
+        <!-- Content -->
+        <div class="col-lg-8 col-12" data-aos="fade-left">
+          <!-- About Me Card -->
+          <div class="about-card mb-4">
+            <h4 class="about-card-title"><i class="bi bi-person me-2"></i>About Me</h4>
+            <p class="about-card-text">
+              I'm Nauman Tariq, a Full Stack Developer and AI Engineer based in Pakistan. I specialize in building modern web applications, AI-powered systems, and automation solutions. With expertise across the full stack — from frontend UI to backend APIs to machine learning pipelines — I deliver end-to-end solutions that are fast, secure, and scalable.
+            </p>
+          </div>
+          <!-- Education Card -->
+          <div class="about-card mb-4">
+            <h4 class="about-card-title"><i class="bi bi-mortarboard me-2"></i>Education</h4>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div>
+                <h6 class="mb-0 fw-semibold">Bachelor of Science in Computer Science</h6>
+                <span class="timeline-meta">University Name — 2020 – 2024</span>
+              </div>
+            </div>
+          </div>
+          <!-- Experience Card -->
+          <div class="about-card mb-4">
+            <h4 class="about-card-title"><i class="bi bi-briefcase me-2"></i>Experience</h4>
+            <div class="timeline-item mb-3">
+              <div class="timeline-dot"></div>
+              <div>
+                <h6 class="mb-0 fw-semibold">Full Stack Developer & AI Engineer</h6>
+                <span class="timeline-meta">Freelance — 2022 – Present</span>
+                <p class="timeline-desc">Building web apps, AI agents, and automation pipelines for international clients.</p>
+              </div>
+            </div>
+          </div>
+          <!-- Certifications Card -->
+          <div class="about-card mb-4">
+            <h4 class="about-card-title"><i class="bi bi-patch-check me-2"></i>Certifications</h4>
+            <div class="row g-2">
+              <div class="col-md-6"><div class="cert-badge">AI Engineering — Coursera</div></div>
+              <div class="col-md-6"><div class="cert-badge">Python for Data Science — IBM</div></div>
+              <div class="col-md-6"><div class="cert-badge">Full Stack Web Dev — Udemy</div></div>
+              <div class="col-md-6"><div class="cert-badge">React Native — Meta</div></div>
+            </div>
+          </div>
+          <!-- Tech Stack Summary -->
+          <div class="about-card">
+            <h4 class="about-card-title"><i class="bi bi-code-slash me-2"></i>Tech Stack Summary</h4>
+            <div class="d-flex flex-wrap gap-2 mt-2">
+              <span class="tech-tag">Python</span><span class="tech-tag">FastAPI</span>
+              <span class="tech-tag">JavaScript</span><span class="tech-tag">React</span>
+              <span class="tech-tag">React Native</span><span class="tech-tag">PostgreSQL</span>
+              <span class="tech-tag">Docker</span><span class="tech-tag">AI/ML</span>
+              <span class="tech-tag">LangChain</span><span class="tech-tag">Bootstrap</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SKILLS SECTION ========== -->
+  <section id="skills" class="section-padding bg-light-custom">
+    <div class="container">
+      <div class="section-header text-center mb-5" data-aos="fade-up">
+        <h2 class="section-title">Skills</h2>
+        <div class="section-line"></div>
+        <p class="section-subtitle">Technologies I work with</p>
+      </div>
+    </div>
+    <!-- Marquee Strip — full width, outside container -->
+    <div class="skills-marquee-wrapper" data-aos="fade-up">
+      <div class="skills-marquee" id="skillsMarquee">
+        <div class="skills-track" id="skillsTrack">
+          <!-- Icons injected by skills-marquee.js -->
+        </div>
+      </div>
+    </div>
+    <!-- Tooltip Popup -->
+    <div class="skill-tooltip" id="skillTooltip">
+      <p class="skill-tooltip-name" id="tooltipName"></p>
+      <p class="skill-tooltip-exp" id="tooltipExp"></p>
+      <p class="skill-tooltip-years" id="tooltipYears"></p>
+    </div>
+  </section>
+
+  <!-- ========== PROJECTS SECTION ========== -->
+  <section id="projects" class="section-padding">
+    <div class="container">
+      <div class="section-header text-center mb-5" data-aos="fade-up">
+        <h2 class="section-title">Projects</h2>
+        <div class="section-line"></div>
+        <p class="section-subtitle">Things I've built</p>
+      </div>
+      <!-- Category Filter -->
+      <div class="project-filters d-flex flex-wrap justify-content-center gap-2 mb-5" data-aos="fade-up">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="website">Website</button>
+        <button class="filter-btn" data-filter="ai-agents">AI Agents</button>
+        <button class="filter-btn" data-filter="ai-automation">AI Automation</button>
+        <button class="filter-btn" data-filter="machine-learning">Machine Learning</button>
+        <button class="filter-btn" data-filter="mobile-apps">Mobile Apps</button>
+        <button class="filter-btn" data-filter="python">Python Projects</button>
+      </div>
+      <!-- Project Cards Grid -->
+      <div class="row g-4" id="projectsGrid">
+        <!-- Cards injected by projects.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SERVICES SECTION ========== -->
+  <section id="services" class="section-padding bg-light-custom">
+    <div class="container">
+      <div class="section-header text-center mb-5" data-aos="fade-up">
+        <h2 class="section-title">Services</h2>
+        <div class="section-line"></div>
+        <p class="section-subtitle">What I offer</p>
+      </div>
+      <div class="row g-4">
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="0">
+          <div class="service-card">
+            <div class="service-icon"><i class="bi bi-globe"></i></div>
+            <h5 class="service-title">Web Development</h5>
+            <p class="service-desc">Full-stack web applications built with modern frameworks — fast, responsive, and production-ready.</p>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+          <div class="service-card">
+            <div class="service-icon"><i class="bi bi-robot"></i></div>
+            <h5 class="service-title">AI Agents</h5>
+            <p class="service-desc">Intelligent AI agents with tool-calling, RAG, memory, and guardrails — powered by the latest LLMs.</p>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+          <div class="service-card">
+            <div class="service-icon"><i class="bi bi-gear-wide-connected"></i></div>
+            <h5 class="service-title">AI Automation</h5>
+            <p class="service-desc">Workflow automation powered by AI — save time, reduce errors, and scale operations effortlessly.</p>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="0">
+          <div class="service-card">
+            <div class="service-icon"><i class="bi bi-phone"></i></div>
+            <h5 class="service-title">Mobile Apps</h5>
+            <p class="service-desc">Cross-platform mobile applications with React Native — iOS & Android from a single codebase.</p>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+          <div class="service-card">
+            <div class="service-icon"><i class="bi bi-graph-up-arrow"></i></div>
+            <h5 class="service-title">Machine Learning</h5>
+            <p class="service-desc">End-to-end ML pipelines — data preprocessing, model training, deployment, and monitoring.</p>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+          <div class="service-card">
+            <div class="service-icon"><i class="bi bi-code-slash"></i></div>
+            <h5 class="service-title">API Development</h5>
+            <p class="service-desc">Secure, scalable REST APIs with FastAPI — JWT auth, rate limiting, and clean documentation.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== CONTACT SECTION ========== -->
+  <section id="contact" class="section-padding">
+    <div class="container">
+      <div class="section-header text-center mb-5" data-aos="fade-up">
+        <h2 class="section-title">Contact</h2>
+        <div class="section-line"></div>
+        <p class="section-subtitle">Let's work together</p>
+      </div>
+      <div class="row g-5 justify-content-center">
+        <!-- Contact Info -->
+        <div class="col-lg-4" data-aos="fade-right">
+          <div class="contact-info">
+            <div class="contact-info-item">
+              <div class="contact-info-icon"><i class="bi bi-envelope"></i></div>
+              <div>
+                <h6 class="contact-info-label">Email</h6>
+                <p class="contact-info-value">nauman@email.com</p>
+              </div>
+            </div>
+            <div class="contact-info-item">
+              <div class="contact-info-icon"><i class="bi bi-telephone"></i></div>
+              <div>
+                <h6 class="contact-info-label">Phone</h6>
+                <p class="contact-info-value">+92 300 0000000</p>
+              </div>
+            </div>
+            <div class="contact-info-item">
+              <div class="contact-info-icon"><i class="bi bi-geo-alt"></i></div>
+              <div>
+                <h6 class="contact-info-label">Location</h6>
+                <p class="contact-info-value">Pakistan</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Contact Form -->
+        <div class="col-lg-7" data-aos="fade-left">
+          <form id="contactForm" class="contact-form" novalidate>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="fullName" class="form-label">Full Name <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="fullName" name="fullName" placeholder="Your full name" required />
+                <div class="invalid-feedback">Please enter your full name.</div>
+              </div>
+              <div class="col-md-6">
+                <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="your@email.com" required />
+                <div class="invalid-feedback">Please enter a valid email address.</div>
+              </div>
+              <div class="col-12">
+                <label for="subject" class="form-label">Subject <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="subject" name="subject" placeholder="How can I help you?" required />
+                <div class="invalid-feedback">Please enter a subject.</div>
+              </div>
+              <div class="col-12">
+                <label for="message" class="form-label">Message <span class="text-danger">*</span></label>
+                <textarea class="form-control" id="message" name="message" rows="5" placeholder="Tell me about your project..." required></textarea>
+                <div class="invalid-feedback">Please enter your message.</div>
+              </div>
+              <div class="col-12">
+                <button type="submit" class="btn btn-primary-custom w-100" id="contactSubmitBtn">
+                  <span class="btn-text"><i class="bi bi-send me-2"></i>Send Message</span>
+                  <span class="btn-loader d-none"><span class="spinner-border spinner-border-sm me-2"></span>Sending...</span>
+                </button>
+              </div>
+              <div id="contactSuccess" class="col-12 d-none">
+                <div class="alert alert-success-custom">
+                  <i class="bi bi-check-circle me-2"></i>Your message has been sent successfully. I'll get back to you soon!
+                </div>
+              </div>
+              <div id="contactError" class="col-12 d-none">
+                <div class="alert alert-error-custom">
+                  <i class="bi bi-exclamation-circle me-2"></i>Something went wrong. Please try again.
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="row g-4 py-5">
+        <!-- Brand -->
+        <div class="col-lg-4">
+          <h4 class="footer-brand">Nauman Tariq</h4>
+          <p class="footer-tagline">Full Stack Developer · AI Engineer · AI Automation Expert · React Native Developer</p>
+          <div class="footer-social d-flex gap-3 mt-3">
+            <a href="https://github.com" target="_blank" class="footer-social-icon" aria-label="GitHub"><i class="bi bi-github"></i></a>
+            <a href="https://linkedin.com" target="_blank" class="footer-social-icon" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+            <a href="https://facebook.com" target="_blank" class="footer-social-icon" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+            <a href="https://instagram.com" target="_blank" class="footer-social-icon" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+            <a href="https://x.com" target="_blank" class="footer-social-icon" aria-label="X"><i class="bi bi-twitter-x"></i></a>
+            <a href="mailto:nauman@email.com" class="footer-social-icon" aria-label="Email"><i class="bi bi-envelope"></i></a>
+          </div>
+        </div>
+        <!-- Quick Links -->
+        <div class="col-lg-2 col-md-4">
+          <h6 class="footer-heading">Quick Links</h6>
+          <ul class="footer-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div>
+        <!-- Services Links -->
+        <div class="col-lg-3 col-md-4">
+          <h6 class="footer-heading">Services</h6>
+          <ul class="footer-links">
+            <li><a href="#services">Web Development</a></li>
+            <li><a href="#services">AI Agents</a></li>
+            <li><a href="#services">AI Automation</a></li>
+            <li><a href="#services">Mobile Apps</a></li>
+            <li><a href="#services">Machine Learning</a></li>
+          </ul>
+        </div>
+        <!-- Contact Info -->
+        <div class="col-lg-3 col-md-4">
+          <h6 class="footer-heading">Contact</h6>
+          <ul class="footer-links">
+            <li><i class="bi bi-envelope me-2"></i>nauman@email.com</li>
+            <li><i class="bi bi-telephone me-2"></i>+92 300 0000000</li>
+            <li><i class="bi bi-geo-alt me-2"></i>Pakistan</li>
+          </ul>
+        </div>
+      </div>
+      <!-- Bottom Footer -->
+      <div class="footer-bottom d-flex flex-column flex-md-row justify-content-between align-items-center py-3">
+        <p class="mb-0">© 2026 Nauman Tariq. All Rights Reserved.</p>
+        <p class="mb-0">Designed &amp; Developed by
+          <!-- Hidden admin trigger: triple-click -->
+          <span id="adminTrigger" class="footer-dev-name">Nauman Tariq</span>
+        </p>
+        <div class="d-flex gap-3">
+          <a href="#" class="footer-policy-link">Privacy Policy</a>
+          <a href="#" class="footer-policy-link">Terms of Use</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========== FLOATING ACTION BUTTONS ========== -->
+  <div class="fab-container" id="fabContainer">
+    <button class="fab fab-whatsapp" id="fabWhatsapp" aria-label="WhatsApp" title="Chat on WhatsApp">
+      <i class="bi bi-whatsapp"></i>
+    </button>
+    <button class="fab fab-call" id="fabCall" aria-label="Call" title="Call Me">
+      <i class="bi bi-telephone-fill"></i>
+    </button>
+    <button class="fab fab-ai" id="fabAI" aria-label="AI Assistant" title="AI Portfolio Assistant">
+      <i class="bi bi-stars"></i>
+    </button>
+  </div>
+
+  <!-- ========== AI CHAT POPUP ========== -->
+  <div class="ai-chat-popup" id="aiChatPopup">
+    <div class="ai-chat-header">
+      <div class="ai-chat-avatar"><i class="bi bi-stars"></i></div>
+      <div>
+        <h6 class="ai-chat-title">Nauman's AI Assistant</h6>
+        <span class="ai-chat-status">Online</span>
+      </div>
+      <button class="ai-chat-close ms-auto" id="aiChatClose" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="ai-chat-body" id="aiChatBody">
+      <div class="ai-message">
+        <div class="ai-bubble">
+          Hi! I'm Nauman's AI assistant. I can answer questions about his projects, skills, experience, and services. How can I help you? 👋
+        </div>
+      </div>
+    </div>
+    <div class="ai-chat-footer">
+      <form id="aiChatForm" class="d-flex gap-2" autocomplete="off">
+        <input type="text" class="form-control ai-chat-input" id="aiChatInput" placeholder="Ask me anything..." maxlength="500" />
+        <button type="submit" class="btn ai-send-btn" aria-label="Send"><i class="bi bi-send-fill"></i></button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========== ADMIN LOGIN MODAL ========== -->
+  <div class="modal fade" id="adminLoginModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content admin-modal">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title">Admin Access</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="adminLoginForm" novalidate>
+            <div class="mb-3">
+              <label for="adminUser" class="form-label">Username</label>
+              <input type="text" class="form-control" id="adminUser" placeholder="Username" required autocomplete="username" />
+            </div>
+            <div class="mb-3">
+              <label for="adminPass" class="form-label">Password</label>
+              <div class="input-group">
+                <input type="password" class="form-control" id="adminPass" placeholder="Password" required autocomplete="current-password" />
+                <button class="btn btn-outline-secondary" type="button" id="toggleAdminPass">
+                  <i class="bi bi-eye" id="togglePassIcon"></i>
+                </button>
+              </div>
+            </div>
+            <div id="adminLoginError" class="alert alert-error-custom d-none mb-3">
+              <i class="bi bi-exclamation-circle me-2"></i>Invalid credentials.
+            </div>
+            <button type="submit" class="btn btn-primary-custom w-100">Login</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SCRIPTS ========== -->
+  <!-- Bootstrap 5 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- AOS -->
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <!-- Custom JS (order matters) -->
+  <script src="js/preloader.js"></script>
+  <script src="js/typewriter.js"></script>
+  <script src="js/skills-marquee.js"></script>
+  <script src="js/projects.js"></script>
+  <script src="js/contact.js"></script>
+  <script src="js/admin.js"></script>
+  <script src="js/ai-chat.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+/* ============================================================
+   NAUMAN TARIQ PORTFOLIO — animations.css
+   ============================================================ */
+
+/* ---------- Preloader ---------- */
+#preloader {
+  position: fixed;
+  inset: 0;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+#preloader.hide {
+  opacity: 0;
+  transform: translateY(-20px);
+  pointer-events: none;
+}
+.preloader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+.preloader-name {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  font-weight: 900;
+  color: #111111;
+  letter-spacing: -2px;
+  animation: preloaderNameIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.preloader-spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid #e0e0e0;
+  border-top-color: #111111;
+  border-radius: 50%;
+  animation: spinnerRotate 0.9s linear infinite;
+}
+
+/* ---------- Keyframes ---------- */
+@keyframes preloaderNameIn {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes spinnerRotate {
+  to { transform: rotate(360deg); }
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+@keyframes bounceDown {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50%       { transform: translateX(-50%) translateY(10px); }
+}
+@keyframes marqueeScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes typingBounce {
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+  40%            { transform: translateY(-8px); opacity: 1; }
+}
+@keyframes fabPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(17,17,17,0.3); }
+  70%  { box-shadow: 0 0 0 12px rgba(17,17,17,0); }
+  100% { box-shadow: 0 0 0 0 rgba(17,17,17,0); }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- FAB Pulse ---------- */
+.fab-ai { animation: fabPulse 2.2s infinite; }
+.fab-whatsapp { animation: fabPulse 2.2s infinite 0.4s; }
+.fab-call     { animation: fabPulse 2.2s infinite 0.8s; }
+
+/* ---------- AOS Custom Overrides ---------- */
+[data-aos] { backface-visibility: hidden; }
+
+/* ---------- Responsive: hero min-height fix on small screens ---------- */
+@media (max-width: 991px) {
+  .hero-section .min-vh-100 {
+    min-height: auto !important;
+    padding: 120px 0 60px;
+  }
+  .hero-left { text-align: center; }
+  .hero-buttons, .hero-social { justify-content: center; }
+  .hero-desc { margin: 0 auto; }
+}
+
+/* ---------- Smooth show/hide for filter ---------- */
+.project-card-col {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.project-card-col.hidden {
+  opacity: 0;
+  transform: scale(0.96);
+  pointer-events: none;
+  position: absolute;
+}
