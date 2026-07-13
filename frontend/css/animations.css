@@ -104,3 +104,15 @@
   pointer-events: none;
   position: absolute;
 }
+
+/* ── AI Chat Popup open animation ── */
+@keyframes chatPopIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

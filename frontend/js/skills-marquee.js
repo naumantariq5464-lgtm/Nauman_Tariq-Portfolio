@@ -60,11 +60,17 @@
     div.setAttribute('role',          'img');
 
     const img = document.createElement('img');
-    img.src   = skill.icon;
-    img.alt   = skill.name;
+    img.src     = skill.icon;
+    img.alt     = skill.name;
     img.loading = 'lazy';
 
+    // Always-visible name label below icon
+    const label = document.createElement('span');
+    label.className   = 'skill-icon-label';
+    label.textContent = skill.name;
+
     div.appendChild(img);
+    div.appendChild(label);
     return div;
   }
 

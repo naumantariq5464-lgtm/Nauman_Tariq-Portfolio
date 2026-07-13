@@ -17,25 +17,34 @@
   let isOpen = false;
 
   // ── Open / Close ──────────────────────────────────────────────
-  fabAI.addEventListener('click', function () {
+  fabAI.addEventListener('click', function (e) {
+    e.stopPropagation();
     isOpen = !isOpen;
-    popup.classList.toggle('open', isOpen);
     if (isOpen) {
+      popup.style.setProperty('display', 'flex', 'important');
+      popup.style.setProperty('flex-direction', 'column', 'important');
+      popup.classList.add('open');
       setTimeout(() => chatInput && chatInput.focus(), 300);
+    } else {
+      popup.style.setProperty('display', 'none', 'important');
+      popup.classList.remove('open');
     }
   });
 
   if (closeBtn) {
-    closeBtn.addEventListener('click', function () {
+    closeBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
       isOpen = false;
+      popup.style.setProperty('display', 'none', 'important');
       popup.classList.remove('open');
     });
   }
 
   // Close on outside click
   document.addEventListener('click', function (e) {
-    if (isOpen && !popup.contains(e.target) && e.target !== fabAI) {
+    if (isOpen && !popup.contains(e.target) && !fabAI.contains(e.target)) {
       isOpen = false;
+      popup.style.setProperty('display', 'none', 'important');
       popup.classList.remove('open');
     }
   });
@@ -44,6 +53,13 @@
   function appendMessage(text, sender) {
     const wrapper = document.createElement('div');
     wrapper.className = sender === 'user' ? 'user-message' : 'ai-message';
+
+    if (sender === 'ai') {
+      const dot = document.createElement('div');
+      dot.className = 'ai-msg-dot';
+      dot.innerHTML = '<i class="bi bi-stars"></i>';
+      wrapper.appendChild(dot);
+    }
 
     const bubble = document.createElement('div');
     bubble.className = sender === 'user' ? 'user-bubble' : 'ai-bubble';
@@ -59,12 +75,19 @@
     wrapper.className = 'ai-message';
     wrapper.id = 'typingIndicator';
 
-    wrapper.innerHTML = `
-      <div class="ai-bubble ai-typing">
-        <div class="typing-dot"></div>
-        <div class="typing-dot"></div>
-        <div class="typing-dot"></div>
-      </div>`;
+    const dot = document.createElement('div');
+    dot.className = 'ai-msg-dot';
+    dot.innerHTML = '<i class="bi bi-stars"></i>';
+
+    const typing = document.createElement('div');
+    typing.className = 'ai-typing';
+    typing.innerHTML = `
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>`;
+
+    wrapper.appendChild(dot);
+    wrapper.appendChild(typing);
     chatBody.appendChild(wrapper);
     scrollBottom();
   }

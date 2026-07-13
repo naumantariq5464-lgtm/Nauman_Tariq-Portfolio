@@ -1,6 +1,5 @@
 /* ============================================================
-   contact.js — Contact form validation & submission
-   In Phase 3 this will POST to the FastAPI backend
+   contact.js — Contact form with real FastAPI backend POST
    ============================================================ */
 
 (function () {
@@ -13,7 +12,6 @@
 
   if (!form) return;
 
-  // ── Field References ──────────────────────────────────────────
   const fields = {
     fullName: document.getElementById('fullName'),
     email:    document.getElementById('email'),
@@ -21,50 +19,36 @@
     message:  document.getElementById('message'),
   };
 
-  // ── Validators ────────────────────────────────────────────────
-  function isValidEmail(val) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val.trim());
+  function isValidEmail(v) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
   }
 
   function validateField(input) {
     const val = input.value.trim();
-    let   ok  = true;
-
-    if (!val) {
-      ok = false;
-    } else if (input.type === 'email' && !isValidEmail(val)) {
-      ok = false;
-    } else if (input.id === 'fullName' && val.length < 2) {
-      ok = false;
-    } else if (input.id === 'message' && val.length < 10) {
-      ok = false;
-    }
-
+    let ok = true;
+    if (!val) ok = false;
+    else if (input.type === 'email' && !isValidEmail(val)) ok = false;
+    else if (input.id === 'fullName' && val.length < 2) ok = false;
+    else if (input.id === 'message' && val.length < 10) ok = false;
     input.classList.toggle('is-invalid', !ok);
-    input.classList.toggle('is-valid',    ok);
+    input.classList.toggle('is-valid', ok);
     return ok;
   }
 
   function validateAll() {
     let valid = true;
-    Object.values(fields).forEach(function (input) {
-      if (!validateField(input)) valid = false;
-    });
+    Object.values(fields).forEach(f => { if (!validateField(f)) valid = false; });
     return valid;
   }
 
-  // Live validation on blur
-  Object.values(fields).forEach(function (input) {
+  Object.values(fields).forEach(input => {
     input.addEventListener('blur',  () => validateField(input));
-    input.addEventListener('input', () => {
-      if (input.classList.contains('is-invalid')) validateField(input);
-    });
+    input.addEventListener('input', () => { if (input.classList.contains('is-invalid')) validateField(input); });
   });
 
-  // ── UI Helpers ────────────────────────────────────────────────
   function setLoading(loading) {
     submitBtn.disabled = loading;
-    btnText.classList.toggle('d-none',  loading);
+    btnText.classList.toggle('d-none', loading);
     btnLoader.classList.toggle('d-none', !loading);
   }
 
@@ -73,22 +57,21 @@
     errorMsg.classList.add('d-none');
     form.reset();
     Object.values(fields).forEach(f => f.classList.remove('is-valid', 'is-invalid'));
-    // Auto-hide after 6s
-    setTimeout(() => successMsg.classList.add('d-none'), 6000);
+    setTimeout(() => successMsg.classList.add('d-none'), 7000);
   }
 
-  function showError() {
+  function showError(msg) {
     errorMsg.classList.remove('d-none');
+    const p = errorMsg.querySelector('p, div');
+    if (p && msg) p.innerHTML = `<i class="bi bi-exclamation-circle me-2"></i>${msg}`;
     successMsg.classList.add('d-none');
-    setTimeout(() => errorMsg.classList.add('d-none'), 5000);
+    setTimeout(() => errorMsg.classList.add('d-none'), 6000);
   }
 
-  // ── Submit Handler ────────────────────────────────────────────
   form.addEventListener('submit', async function (e) {
     e.preventDefault();
     successMsg.classList.add('d-none');
     errorMsg.classList.add('d-none');
-
     if (!validateAll()) return;
 
     const payload = {
@@ -99,25 +82,25 @@
     };
 
     setLoading(true);
-
     try {
-      /* ── Phase 3: replace this block with real API call ──
-         const res = await fetch('/api/contact', {
-           method:  'POST',
-           headers: { 'Content-Type': 'application/json' },
-           body:    JSON.stringify(payload),
-         });
-         if (!res.ok) throw new Error('Server error');
-      ─────────────────────────────────────────────────── */
+      const res = await fetch(CONFIG.API_BASE_URL + '/contact/', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(payload),
+      });
 
-      // Phase 1 simulation — remove when backend is ready
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      console.log('Contact payload (Phase 1 mock):', payload);
+      if (res.status === 429) {
+        showError('Too many messages. Please try again later.');
+        return;
+      }
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        showError(err.detail || 'Something went wrong. Please try again.');
+        return;
+      }
       showSuccess();
-
-    } catch (err) {
-      console.error('Contact form error:', err);
-      showError();
+    } catch {
+      showError('Could not connect to server. Please try again later.');
     } finally {
       setLoading(false);
     }
