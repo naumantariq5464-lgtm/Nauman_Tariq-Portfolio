@@ -1253,3 +1253,27 @@ body {
   .footer-brand { font-size: 1.1rem; }
 }
 
+
+/* ---------- Projects Empty State ---------- */
+.projects-empty-state {
+  text-align: center;
+  padding: 70px 20px;
+  color: var(--gray-mid);
+}
+.projects-empty-state i {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 16px;
+  color: var(--gray-border);
+}
+.projects-empty-state h5 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--gray-dark);
+  margin-bottom: 8px;
+}
+.projects-empty-state p {
+  font-size: 0.9rem;
+  color: var(--gray-mid);
+  margin: 0;
+}

@@ -1,137 +1,130 @@
 /* ============================================================
    projects.js — Fetch projects from FastAPI backend
-   Falls back to static placeholder if API is unreachable
+   No hardcoded fallback — shows "No projects available" when API
+   returns empty or is unreachable
    ============================================================ */
 
 (function () {
 
   const grid       = document.getElementById('projectsGrid');
-  const filterBtns = document.querySelectorAll('.filter-btn');
+  const filterBtns = document.querySelector('.project-filters');
   if (!grid) return;
 
-  let allProjects = [];
+  let allProjects  = [];
+  let activeFilter = 'all';
 
-  // ── Fallback static data (shown when API is offline) ──────
-  const FALLBACK = [
-    {
-      id: 1, title: 'AI Portfolio CMS',
-      category: { name: 'AI Agents', slug: 'ai-agents' },
-      description: 'Production-grade AI-powered portfolio CMS with dynamic project management, hidden admin dashboard, and an AI assistant with RAG and tool-calling.',
-      image_url: 'https://placehold.co/600x360/111111/FFFFFF?text=AI+Portfolio+CMS',
-      skills_tags: 'FastAPI,Python,PostgreSQL,Grok API,RAG',
-      github_link: 'https://github.com', linkedin_link: 'https://linkedin.com', demo_link: '#',
-    },
-    {
-      id: 2, title: 'E-Commerce Platform',
-      category: { name: 'Website', slug: 'website' },
-      description: 'Full-stack e-commerce platform with product catalog, cart, checkout, payment integration, and admin panel for inventory management.',
-      image_url: 'https://placehold.co/600x360/111111/FFFFFF?text=E-Commerce+Platform',
-      skills_tags: 'React,Node.js,MongoDB,Stripe,Bootstrap',
-      github_link: 'https://github.com', linkedin_link: 'https://linkedin.com', demo_link: '#',
-    },
-    {
-      id: 3, title: 'AI Customer Support Agent',
-      category: { name: 'AI Automation', slug: 'ai-automation' },
-      description: 'Intelligent customer support agent with memory, multi-turn conversations, ticket creation, and seamless handoff to human agents.',
-      image_url: 'https://placehold.co/600x360/111111/FFFFFF?text=AI+Support+Agent',
-      skills_tags: 'LangChain,FastAPI,OpenAI,Redis,Python',
-      github_link: 'https://github.com', linkedin_link: 'https://linkedin.com', demo_link: null,
-    },
-    {
-      id: 4, title: 'Sentiment Analysis Dashboard',
-      category: { name: 'Machine Learning', slug: 'machine-learning' },
-      description: 'Real-time sentiment analysis of social media posts using NLP. Dashboard shows trends, insights, and exportable reports.',
-      image_url: 'https://placehold.co/600x360/111111/FFFFFF?text=Sentiment+Analysis',
-      skills_tags: 'Python,scikit-learn,NLTK,FastAPI,Chart.js',
-      github_link: 'https://github.com', linkedin_link: 'https://linkedin.com', demo_link: '#',
-    },
-    {
-      id: 5, title: 'Fitness Tracker App',
-      category: { name: 'Mobile Apps', slug: 'mobile-apps' },
-      description: 'Cross-platform fitness tracking app built with React Native. Features workout logging, progress charts, and push notifications.',
-      image_url: 'https://placehold.co/600x360/111111/FFFFFF?text=Fitness+Tracker',
-      skills_tags: 'React Native,Expo,Node.js,MongoDB,Firebase',
-      github_link: 'https://github.com', linkedin_link: 'https://linkedin.com', demo_link: null,
-    },
-    {
-      id: 6, title: 'Web Scraping Automation',
-      category: { name: 'Python Projects', slug: 'python' },
-      description: 'Automated web scraper that extracts data from multiple sources, cleans it, and exports structured reports to CSV and Google Sheets.',
-      image_url: 'https://placehold.co/600x360/111111/FFFFFF?text=Web+Scraping',
-      skills_tags: 'Python,Selenium,BeautifulSoup,Pandas,gspread',
-      github_link: 'https://github.com', linkedin_link: 'https://linkedin.com', demo_link: null,
-    },
-  ];
+  // ── Empty state HTML ──────────────────────────────────────
+  function emptyState(msg) {
+    return `
+      <div class="col-12" data-aos="fade-up">
+        <div class="projects-empty-state">
+          <i class="bi bi-folder2-open"></i>
+          <h5>${msg}</h5>
+          <p>Check back soon — new projects are being added regularly.</p>
+        </div>
+      </div>`;
+  }
 
-  // ── Fetch from API ─────────────────────────────────────────
+  // ── Loading state ─────────────────────────────────────────
+  function loadingState() {
+    return `
+      <div class="col-12 text-center py-5" data-aos="fade-up">
+        <div class="projects-loading">
+          <div class="spinner-border spinner-border-sm me-2" role="status" style="color:var(--black);"></div>
+          <span style="color:var(--gray-mid); font-size:0.9rem;">Loading projects...</span>
+        </div>
+      </div>`;
+  }
+
+  // ── Fetch from API ────────────────────────────────────────
   async function loadProjects() {
+    grid.innerHTML = loadingState();
+
     try {
       const res = await fetch(CONFIG.API_BASE_URL + '/projects/');
       if (!res.ok) throw new Error('API error');
       const data = await res.json();
-      allProjects = data.projects && data.projects.length > 0 ? data.projects : FALLBACK;
+      allProjects = Array.isArray(data.projects) ? data.projects : [];
     } catch {
-      allProjects = FALLBACK;
+      // API unreachable — show empty state, no fake data
+      allProjects = [];
     }
-    renderAll('all');
+
     buildFilters();
+    renderAll('all');
   }
 
-  // ── Build dynamic filter buttons from live categories ─────
+  // ── Build filter buttons from live categories only ────────
   function buildFilters() {
-    const slugs = new Set(allProjects.map(p => p.category?.slug).filter(Boolean));
-    const names = {};
-    allProjects.forEach(p => { if (p.category) names[p.category.slug] = p.category.name; });
+    if (!filterBtns) return;
 
-    // Keep existing All button, replace the rest
-    const container = document.querySelector('.project-filters');
-    if (!container) return;
+    // Always keep "All" button
+    filterBtns.innerHTML = `<button class="filter-btn active" data-filter="all">All</button>`;
 
-    container.innerHTML = `<button class="filter-btn active" data-filter="all">All</button>`;
-    slugs.forEach(slug => {
-      const btn = document.createElement('button');
-      btn.className = 'filter-btn';
-      btn.dataset.filter = slug;
-      btn.textContent = names[slug];
-      container.appendChild(btn);
+    // Only add categories that actually have projects
+    const seen = new Set();
+    allProjects.forEach(p => {
+      if (p.category && !seen.has(p.category.slug)) {
+        seen.add(p.category.slug);
+        const btn = document.createElement('button');
+        btn.className      = 'filter-btn';
+        btn.dataset.filter = p.category.slug;
+        btn.textContent    = p.category.name;
+        filterBtns.appendChild(btn);
+      }
     });
 
-    container.querySelectorAll('.filter-btn').forEach(btn => {
+    // Re-attach click handlers
+    filterBtns.querySelectorAll('.filter-btn').forEach(btn => {
       btn.addEventListener('click', function () {
-        container.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        filterBtns.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
         this.classList.add('active');
-        renderAll(this.dataset.filter);
+        activeFilter = this.dataset.filter;
+        renderAll(activeFilter);
       });
     });
   }
 
-  // ── Render card ────────────────────────────────────────────
+  // ── Render a single card ──────────────────────────────────
   function renderCard(p) {
     const tags = p.skills_tags
-      ? p.skills_tags.split(',').map(t => `<span class="project-tag">${t.trim()}</span>`).join('')
+      ? p.skills_tags.split(',').map(t =>
+          `<span class="project-tag">${t.trim()}</span>`).join('')
       : '';
 
     const demoBtn = p.demo_link
-      ? `<a href="${p.demo_link}" target="_blank" rel="noopener" class="btn btn-primary-custom project-demo-btn">Live Demo</a>`
+      ? `<a href="${p.demo_link}" target="_blank" rel="noopener"
+            class="btn btn-primary-custom project-demo-btn">Live Demo</a>`
       : '';
 
-    const cat = p.category ? p.category.name : 'Project';
-    const catSlug = p.category ? p.category.slug : '';
+    const img = p.image_url
+      ? p.image_url
+      : `https://placehold.co/600x360/111111/FFFFFF?text=${encodeURIComponent(p.title)}`;
 
     return `
-      <div class="col-lg-4 col-md-6 project-card-col" data-category="${catSlug}" data-aos="fade-up">
+      <div class="col-lg-4 col-md-6 project-card-col"
+           data-category="${p.category?.slug || ''}"
+           data-aos="fade-up">
         <div class="project-card">
-          <img src="${p.image_url || 'https://placehold.co/600x360/111111/FFFFFF?text=' + encodeURIComponent(p.title)}"
-               alt="${p.title}" class="project-card-img" loading="lazy"
-               onerror="this.src='https://placehold.co/600x360/111111/FFFFFF?text=Project'" />
+          <img src="${img}" alt="${p.title}"
+               class="project-card-img" loading="lazy"
+               onerror="this.src='https://placehold.co/600x360/f5f5f5/999?text=Project'" />
           <div class="project-card-body">
-            <span class="project-category-badge">${cat}</span>
+            <span class="project-category-badge">${p.category?.name || 'Project'}</span>
             <h5 class="project-card-title">${p.title}</h5>
             <p class="project-card-desc">${p.description}</p>
             <div class="project-tags">${tags}</div>
             <div class="project-card-actions">
-              ${p.github_link ? `<a href="${p.github_link}" target="_blank" rel="noopener" class="project-action-icon" aria-label="GitHub"><i class="bi bi-github"></i></a>` : ''}
-              ${p.linkedin_link ? `<a href="${p.linkedin_link}" target="_blank" rel="noopener" class="project-action-icon" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>` : ''}
+              ${p.github_link
+                ? `<a href="${p.github_link}" target="_blank" rel="noopener"
+                      class="project-action-icon" aria-label="GitHub">
+                     <i class="bi bi-github"></i></a>`
+                : ''}
+              ${p.linkedin_link
+                ? `<a href="${p.linkedin_link}" target="_blank" rel="noopener"
+                      class="project-action-icon" aria-label="LinkedIn Post">
+                     <i class="bi bi-linkedin"></i></a>`
+                : ''}
               ${demoBtn}
             </div>
           </div>
@@ -139,14 +132,22 @@
       </div>`;
   }
 
-  // ── Filter & render ────────────────────────────────────────
+  // ── Filter & render grid ──────────────────────────────────
   function renderAll(filter) {
     const filtered = filter === 'all'
       ? allProjects
       : allProjects.filter(p => p.category?.slug === filter);
 
+    if (allProjects.length === 0) {
+      // No projects in DB at all
+      grid.innerHTML = emptyState('No projects available yet.');
+      return;
+    }
+
     if (filtered.length === 0) {
-      grid.innerHTML = `<div class="col-12 text-center py-5"><p class="text-muted">No projects found.</p></div>`;
+      // Category selected but no projects in it
+      const catName = filterBtns?.querySelector(`[data-filter="${filter}"]`)?.textContent || filter;
+      grid.innerHTML = emptyState(`No projects in "${catName}" yet.`);
       return;
     }
 
@@ -154,7 +155,7 @@
     if (typeof AOS !== 'undefined') AOS.refresh();
   }
 
-  // ── Init ───────────────────────────────────────────────────
+  // ── Init ─────────────────────────────────────────────────
   loadProjects();
 
 })();
