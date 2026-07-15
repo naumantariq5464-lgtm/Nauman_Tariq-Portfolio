@@ -325,9 +325,18 @@ def chat(session_id: str, user_message: str, db: Session) -> str:
     else:
         final_text = response_msg.content or ""
 
-    # 9. Output guardrail
-    if is_prompt_injection(final_text):
-        final_text = "I'm sorry, I can only discuss Nauman's portfolio, skills, and services."
+    # 9. Output guardrail — only block if actual secrets are in response
+    SENSITIVE_OUTPUT_PATTERNS = [
+        r"(password|secret_key|api_key)\s*[:=]\s*\S+",
+        r"postgresql\+psycopg://\S+",
+        r"jwt_secret\s*[:=]",
+        r"gsk_[a-zA-Z0-9]+",        # Groq key pattern
+        r"re_[a-zA-Z0-9]{20,}",     # Resend key pattern
+    ]
+    for pattern in SENSITIVE_OUTPUT_PATTERNS:
+        if re.search(pattern, final_text, re.IGNORECASE):
+            final_text = "I'm sorry, I can only discuss Nauman's portfolio, skills, and services."
+            break
 
     # 10. Save to history
     _sessions[session_id].append({"role": "assistant", "content": final_text})
