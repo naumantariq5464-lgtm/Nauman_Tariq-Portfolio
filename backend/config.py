@@ -44,6 +44,10 @@ class Settings(BaseSettings):
     resend_from_email: str = "portfolio@yourdomain.com"
     resend_to_email: str
 
+    # ── Groq AI ────────────────────────────────────────────────
+    groq_api_key: str = ""
+    groq_model: str = "llama-3.3-70b-versatile"
+
     # ── CORS ───────────────────────────────────────────────────
     allowed_origins: str = "http://localhost:5500,http://127.0.0.1:5500"
 

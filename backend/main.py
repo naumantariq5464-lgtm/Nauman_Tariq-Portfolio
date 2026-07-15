@@ -12,7 +12,7 @@ from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 
 from config import settings
-from routers import auth_router, categories_router, projects_router, contact_router
+from routers import auth_router, categories_router, projects_router, contact_router, ai_router
 
 # ── Rate Limiter ──────────────────────────────────────────────
 limiter = Limiter(key_func=get_remote_address, default_limits=["200/minute"])
@@ -58,6 +58,7 @@ app.include_router(auth_router,       prefix="/api/v1")
 app.include_router(categories_router, prefix="/api/v1")
 app.include_router(projects_router,   prefix="/api/v1")
 app.include_router(contact_router,    prefix="/api/v1")
+app.include_router(ai_router,         prefix="/api/v1")
 
 # ── Health Check ──────────────────────────────────────────────
 @app.get("/health", tags=["Health"], summary="Health check")
