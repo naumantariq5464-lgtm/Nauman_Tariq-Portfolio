@@ -72,7 +72,7 @@
   // ── FAB: WhatsApp ─────────────────────────────────────────────
   const fabWhatsapp = document.getElementById('fabWhatsapp');
   if (fabWhatsapp) {
-    const PHONE   = '923000000000'; // Replace with Nauman's number (no + or spaces)
+    const PHONE   = '923039589929'; // Nauman's WhatsApp number
     const MESSAGE = encodeURIComponent("Hi Nauman! I visited your portfolio and I'd like to discuss a project.");
     fabWhatsapp.addEventListener('click', function () {
       window.open(`https://wa.me/${PHONE}?text=${MESSAGE}`, '_blank', 'noopener');
@@ -83,7 +83,7 @@
   const fabCall = document.getElementById('fabCall');
   if (fabCall) {
     fabCall.addEventListener('click', function () {
-      window.location.href = 'tel:+923000000000'; // Replace with real number
+      window.location.href = 'tel:+923039589929';
     });
   }
 
@@ -109,4 +109,40 @@
     });
   });
 
+})();
+
+// ── Count-up animation for stats ─────────────────────────────
+(function () {
+  const counters = document.querySelectorAll('.count-up');
+  if (!counters.length) return;
+
+  function animateCounter(el) {
+    const target  = parseInt(el.dataset.target, 10);
+    const suffix  = el.dataset.suffix || '';
+    const duration = 1600; // ms
+    const steps    = 40;
+    const interval = duration / steps;
+    let current    = 0;
+
+    const timer = setInterval(() => {
+      current += Math.ceil(target / steps);
+      if (current >= target) {
+        current = target;
+        clearInterval(timer);
+      }
+      el.textContent = current + suffix;
+    }, interval);
+  }
+
+  // Use IntersectionObserver — animate when stats scroll into view
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        animateCounter(entry.target);
+        observer.unobserve(entry.target); // run only once
+      }
+    });
+  }, { threshold: 0.5 });
+
+  counters.forEach(el => observer.observe(el));
 })();

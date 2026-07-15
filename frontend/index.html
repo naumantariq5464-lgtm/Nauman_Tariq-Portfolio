@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Nauman Tariq — Full Stack Developer, AI Engineer, AI Automation Expert, React Native Developer." />
   <meta name="robots" content="index, follow" />
-  <title>Nauman Tariq — AI Powered Portfolio</title>
+  <title>It's Nauman - Portfolio</title>
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="shortcut icon" type="image/png" href="favicon.png" />
 
   <!-- Bootstrap 5 -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
@@ -20,6 +22,7 @@
   <!-- Custom CSS -->
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/animations.css" />
+  
 </head>
 <body>
 
@@ -87,7 +90,7 @@
   <!-- ========== NAVBAR ========== -->
   <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm" id="mainNav">
     <div class="container">
-      <a class="navbar-brand fw-bold" href="#home">Nauman Tariq</a>
+      <a class="navbar-brand fw-bold" href="#home">Eng.Nauman Tariq</a>
       <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -125,9 +128,9 @@
             </a>
           </div>
           <div class="hero-social mt-4 d-flex gap-3">
-            <a href="https://github.com" target="_blank" class="social-icon"><i class="bi bi-github"></i></a>
-            <a href="https://linkedin.com" target="_blank" class="social-icon"><i class="bi bi-linkedin"></i></a>
-            <a href="mailto:nauman@email.com" class="social-icon"><i class="bi bi-envelope"></i></a>
+            <a href="https://github.com/naumantariq5464-lgtm" target="_blank" class="social-icon"><i class="bi bi-github"></i></a>
+            <a href="https://www.linkedin.com/in/nauman-tariq-779b16336/" target="_blank" class="social-icon"><i class="bi bi-linkedin"></i></a>
+            <a href="mailto:naumantariq5464@email.com" class="social-icon"><i class="bi bi-envelope"></i></a>
           </div>
         </div>
         <!-- Right Side: hidden on mobile (< lg), visible on desktop -->
@@ -146,72 +149,128 @@
   </section>
 
   <!-- ========== ABOUT SECTION ========== -->
-  <section id="about" class="section-padding">
+  <section id="about" class="section-padding bg-light-custom">
     <div class="container">
       <div class="section-header text-center mb-5" data-aos="fade-up">
         <h2 class="section-title">About Me</h2>
         <div class="section-line"></div>
+        <p class="section-subtitle">Get to know me</p>
       </div>
-      <div class="row align-items-start g-4">
-        <!-- Profile Image — Desktop Only -->
-        <div class="col-lg-4 about-image-col d-none d-lg-flex justify-content-center" data-aos="fade-right">
+
+      <div class="row align-items-start g-5">
+
+        <!-- ── Left: Profile Image (Desktop only) ── -->
+        <div class="col-lg-4 d-none d-lg-flex flex-column align-items-center gap-4" data-aos="fade-right">
           <div class="about-image-wrapper">
-            <img src="assets/images/profile.jpg" alt="Nauman Tariq" class="about-image" onerror="this.src='https://placehold.co/380x450/111111/FFFFFF?text=Nauman+Tariq'" />
+            <img src="assets/images/profile.jpg" alt="Nauman Tariq" class="about-image"
+                 onerror="this.src='https://placehold.co/360x420/111111/FFFFFF?text=Nauman+Tariq'" />
+          </div>
+          <!-- Quick contact card below image -->
+          <div class="about-contact-card">
+            <div class="about-contact-item">
+              <i class="bi bi-geo-alt-fill"></i>
+              <span>Pakistan</span>
+            </div>
+            <div class="about-contact-item">
+              <i class="bi bi-envelope-fill"></i>
+              <span>naumantariq5464@gmail.com</span>
+            </div>
+            <div class="about-contact-item">
+              <i class="bi bi-briefcase-fill"></i>
+              <span>Available for Freelance</span>
+            </div>
+            <a href="assets/resume.pdf" download class="btn-primary-custom w-100 text-center mt-3" style="font-size:0.85rem; padding:10px 20px;">
+              <i class="bi bi-download me-2"></i>Download Resume
+            </a>
           </div>
         </div>
-        <!-- Content -->
+
+        <!-- ── Right: Content ── -->
         <div class="col-lg-8 col-12" data-aos="fade-left">
-          <!-- About Me Card -->
-          <div class="about-card mb-4">
-            <h4 class="about-card-title"><i class="bi bi-person me-2"></i>About Me</h4>
-            <p class="about-card-text">
-              I'm Nauman Tariq, a Full Stack Developer and AI Engineer based in Pakistan. I specialize in building modern web applications, AI-powered systems, and automation solutions. With expertise across the full stack — from frontend UI to backend APIs to machine learning pipelines — I deliver end-to-end solutions that are fast, secure, and scalable.
+
+          <!-- Bio -->
+          <div class="about-bio mb-4">
+            <h3 class="about-bio-name">Hi, I'm Nauman Tariq 👋</h3>
+            <p class="about-bio-text">
+              A passionate Full Stack Developer and AI Engineer based in Pakistan with a knack for
+              building intelligent, production-grade systems. I specialize in modern web applications,
+              AI agents, automation pipelines, and mobile apps — delivering end-to-end solutions
+              that are fast, secure, and scalable.
             </p>
           </div>
-          <!-- Education Card -->
-          <div class="about-card mb-4">
-            <h4 class="about-card-title"><i class="bi bi-mortarboard me-2"></i>Education</h4>
-            <div class="timeline-item">
-              <div class="timeline-dot"></div>
+
+          <!-- Stats row -->
+          <div class="about-stats-row mb-4">
+            <div class="about-stat">
+              <span class="about-stat-num count-up" data-target="2" data-suffix="+">0+</span>
+              <span class="about-stat-label">Years Experience</span>
+            </div>
+            <div class="about-stat">
+              <span class="about-stat-num count-up" data-target="20" data-suffix="+">0+</span>
+              <span class="about-stat-label">Projects Built</span>
+            </div>
+            <div class="about-stat">
+              <span class="about-stat-num count-up" data-target="10" data-suffix="+">0+</span>
+              <span class="about-stat-label">Happy Clients</span>
+            </div>
+            <div class="about-stat">
+              <span class="about-stat-num count-up" data-target="4" data-suffix="+">0+</span>
+              <span class="about-stat-label">Certifications</span>
+            </div>
+          </div>
+
+          <!-- Info grid -->
+          <div class="about-info-grid mb-4">
+            <!-- Education -->
+            <div class="about-info-card" data-aos="fade-up" data-aos-delay="0">
+              <div class="about-info-icon"><i class="bi bi-mortarboard-fill"></i></div>
               <div>
-                <h6 class="mb-0 fw-semibold">Bachelor of Science in Computer Science</h6>
-                <span class="timeline-meta">University Name — 2020 – 2024</span>
+                <h6 class="about-info-title">Education</h6>
+                <p class="about-info-main">BS Software Engineering</p>
+                <p class="about-info-sub">GC University Faisalabad · 2023–2027</p>
+              </div>
+            </div>
+            <!-- Experience -->
+            <div class="about-info-card" data-aos="fade-up" data-aos-delay="100">
+              <div class="about-info-icon"><i class="bi bi-briefcase-fill"></i></div>
+              <div>
+                <h6 class="about-info-title">Experience</h6>
+                <p class="about-info-main">Full Stack Dev & AI Engineer</p>
+                <p class="about-info-sub">Freelance · 2022–Present</p>
               </div>
             </div>
           </div>
-          <!-- Experience Card -->
-          <div class="about-card mb-4">
-            <h4 class="about-card-title"><i class="bi bi-briefcase me-2"></i>Experience</h4>
-            <div class="timeline-item mb-3">
-              <div class="timeline-dot"></div>
-              <div>
-                <h6 class="mb-0 fw-semibold">Full Stack Developer & AI Engineer</h6>
-                <span class="timeline-meta">Freelance — 2022 – Present</span>
-                <p class="timeline-desc">Building web apps, AI agents, and automation pipelines for international clients.</p>
-              </div>
+
+          <!-- Certifications -->
+          <div class="mb-4" data-aos="fade-up">
+            <h6 class="about-section-label"><i class="bi bi-patch-check me-2"></i>Certifications</h6>
+            <div class="about-certs-row">
+              <div class="cert-pill"><i class="bi bi-check-circle me-1"></i>AI Engineering</div>
+              <div class="cert-pill"><i class="bi bi-check-circle me-1"></i>Python for Data Science</div>
+              <div class="cert-pill"><i class="bi bi-check-circle me-1"></i>Full Stack Web Dev</div>
+              <div class="cert-pill"><i class="bi bi-check-circle me-1"></i>React Native</div>
             </div>
           </div>
-          <!-- Certifications Card -->
-          <div class="about-card mb-4">
-            <h4 class="about-card-title"><i class="bi bi-patch-check me-2"></i>Certifications</h4>
-            <div class="row g-2">
-              <div class="col-md-6"><div class="cert-badge">AI Engineering — Coursera</div></div>
-              <div class="col-md-6"><div class="cert-badge">Python for Data Science — IBM</div></div>
-              <div class="col-md-6"><div class="cert-badge">Full Stack Web Dev — Udemy</div></div>
-              <div class="col-md-6"><div class="cert-badge">React Native — Meta</div></div>
+
+          <!-- Tech Stack -->
+          <div data-aos="fade-up">
+            <h6 class="about-section-label"><i class="bi bi-code-slash me-2"></i>Tech Stack</h6>
+            <div class="d-flex flex-wrap gap-2">
+              <span class="tech-tag">Python</span>
+              <span class="tech-tag">FastAPI</span>
+              <span class="tech-tag">JavaScript</span>
+              <span class="tech-tag">React</span>
+              <span class="tech-tag">React Native</span>
+              <span class="tech-tag">Node.js</span>
+              <span class="tech-tag">PostgreSQL</span>
+              <span class="tech-tag">MongoDB</span>
+              <span class="tech-tag">Docker</span>
+              <span class="tech-tag">LangChain</span>
+              <span class="tech-tag">AI/ML</span>
+              <span class="tech-tag">n8n</span>
             </div>
           </div>
-          <!-- Tech Stack Summary -->
-          <div class="about-card">
-            <h4 class="about-card-title"><i class="bi bi-code-slash me-2"></i>Tech Stack Summary</h4>
-            <div class="d-flex flex-wrap gap-2 mt-2">
-              <span class="tech-tag">Python</span><span class="tech-tag">FastAPI</span>
-              <span class="tech-tag">JavaScript</span><span class="tech-tag">React</span>
-              <span class="tech-tag">React Native</span><span class="tech-tag">PostgreSQL</span>
-              <span class="tech-tag">Docker</span><span class="tech-tag">AI/ML</span>
-              <span class="tech-tag">LangChain</span><span class="tech-tag">Bootstrap</span>
-            </div>
-          </div>
+
         </div>
       </div>
     </div>
@@ -338,14 +397,14 @@
               <div class="contact-info-icon"><i class="bi bi-envelope"></i></div>
               <div>
                 <h6 class="contact-info-label">Email</h6>
-                <p class="contact-info-value">nauman@email.com</p>
+                <p class="contact-info-value">naumantariq5464@email.com</p>
               </div>
             </div>
             <div class="contact-info-item">
               <div class="contact-info-icon"><i class="bi bi-telephone"></i></div>
               <div>
                 <h6 class="contact-info-label">Phone</h6>
-                <p class="contact-info-value">+92 300 0000000</p>
+                <p class="contact-info-value">+92 3039589929</p>
               </div>
             </div>
             <div class="contact-info-item">
@@ -413,12 +472,11 @@
           <h4 class="footer-brand">Nauman Tariq</h4>
           <p class="footer-tagline">Full Stack Developer · AI Engineer · AI Automation Expert · React Native Developer</p>
           <div class="footer-social d-flex gap-3 mt-3">
-            <a href="https://github.com" target="_blank" class="footer-social-icon" aria-label="GitHub"><i class="bi bi-github"></i></a>
-            <a href="https://linkedin.com" target="_blank" class="footer-social-icon" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
-            <a href="https://facebook.com" target="_blank" class="footer-social-icon" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
-            <a href="https://instagram.com" target="_blank" class="footer-social-icon" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-            <a href="https://x.com" target="_blank" class="footer-social-icon" aria-label="X"><i class="bi bi-twitter-x"></i></a>
-            <a href="mailto:nauman@email.com" class="footer-social-icon" aria-label="Email"><i class="bi bi-envelope"></i></a>
+            <a href="https://github.com/naumantariq5464-lgtm" target="_blank" class="footer-social-icon" aria-label="GitHub"><i class="bi bi-github"></i></a>
+            <a href="https://www.linkedin.com/in/nauman-tariq-779b16336/" target="_blank" class="footer-social-icon" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+          
+           
+            <a href="mailto:naumantariq5464@email.com" class="footer-social-icon" aria-label="Email"><i class="bi bi-envelope"></i></a>
           </div>
         </div>
         <!-- Quick Links -->
@@ -448,8 +506,8 @@
         <div class="col-lg-3 col-md-4">
           <h6 class="footer-heading">Contact</h6>
           <ul class="footer-links">
-            <li><i class="bi bi-envelope me-2"></i>nauman@email.com</li>
-            <li><i class="bi bi-telephone me-2"></i>+92 300 0000000</li>
+            <li><i class="bi bi-envelope me-2"></i>naumantariq5464@email.com</li>
+            <li><i class="bi bi-telephone me-2"></i>+92 303 9589 929</li>
             <li><i class="bi bi-geo-alt me-2"></i>Pakistan</li>
           </ul>
         </div>
