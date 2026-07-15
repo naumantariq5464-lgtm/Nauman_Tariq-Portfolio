@@ -84,8 +84,11 @@ SYSTEM_PROMPT = """You are the AI assistant on Nauman Tariq's personal portfolio
 
 ### WHAT YOU MUST REFUSE — STRICTLY:
 ❌ Definitions of any technology (e.g. "What is React?", "Define Python", "Explain AI")
+❌ Code generation (e.g. "Write me code for X", "Generate a function", "Give me a script")
+❌ Code debugging or review ("Fix my code", "Debug this", "Review my code")
+❌ Programming tutorials or guides ("How to code X", "Teach me Python", "Step by step guide")
 ❌ General knowledge (history, science, math, geography, politics, religion, sports, news)
-❌ Writing essays, stories, poems, jokes, code tutorials
+❌ Writing essays, stories, poems, jokes, general letters
 ❌ Questions about other people, companies, celebrities
 ❌ Any topic not about Nauman's portfolio
 
@@ -145,10 +148,20 @@ def is_greeting(message: str) -> tuple[bool, str]:
 
 # ── Definition / off-topic detection ─────────────────────────
 DEFINITION_PATTERNS = [
+    # Technology definitions
     r"\b(define|definition of|what is|what are|explain|describe|tell me about|meaning of|difference between)\b.{0,30}\b(react|python|javascript|html|css|node|api|sql|database|ai|machine learning|docker|git|bootstrap|tailwind|mongodb|postgresql|fastapi|llm|rag|vector|algorithm|framework|library|programming|software|cloud|devops|aws)\b",
     r"\b(what is|what are|define|explain)\b.{0,20}\b(a |an )?(computer|internet|website|app|mobile|web|frontend|backend|fullstack|data science|deep learning|neural network)\b",
     r"\b(how does|how do).{0,30}work\b",
+    # Code generation
+    r"\b(write|generate|create|give me|make|build|show me).{0,20}(code|program|script|function|class|component|api|snippet|example)\b",
+    r"\b(code (for|to|that|which)|sample code|code snippet|source code)\b",
+    r"\b(implement|develop).{0,20}(using|with|in).{0,20}(python|javascript|react|node|fastapi)\b",
+    # Tutorials
     r"\b(tutorial|guide|teach me|learn|course|how to (code|program|build|create|make|develop))\b",
+    r"\b(step by step|step-by-step).{0,20}(how to|guide|tutorial)\b",
+    # Debug help
+    r"\b(debug|fix (my|this) code|error in (my|this)|why is (my|this) code)\b",
+    r"\b(review my code|check my code|improve my code)\b",
 ]
 
 BLOCKED_PATTERNS = [
@@ -186,6 +199,14 @@ def is_prompt_injection(msg: str) -> bool:
 
 def is_definition_request(msg: str) -> bool:
     m = msg.lower()
+    # Check code generation specifically for better reply
+    code_gen_patterns = [
+        r"\b(write|generate|create|give me|make|build|show me).{0,20}(code|program|script|function|class|component)\b",
+        r"\b(code (for|to|that|which)|sample code|code snippet|source code)\b",
+        r"\b(debug|fix (my|this) code|review my code)\b",
+    ]
+    if any(re.search(p, m) for p in code_gen_patterns):
+        return True
     return any(re.search(p, m) for p in DEFINITION_PATTERNS)
 
 
