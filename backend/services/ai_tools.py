@@ -133,6 +133,7 @@ def _get_latest_projects(db: Session, limit: int = 5) -> str:
             "category":    p.category.name if p.category else "General",
             "skills":      p.skills_tags or "",
             "github":      p.github_link or "",
+            "linkedin":    p.linkedin_link or "",
             "demo":        p.demo_link or "",
             "featured":    p.is_featured,
         })

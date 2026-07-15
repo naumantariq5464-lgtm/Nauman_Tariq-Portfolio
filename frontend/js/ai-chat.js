@@ -1,6 +1,6 @@
 /* ============================================================
    ai-chat.js — AI Portfolio Assistant
-   Connects to FastAPI /api/v1/ai/chat endpoint (Groq AI Agent)
+   Features: typewriter effect, project buttons, rich formatting
    ============================================================ */
 
 (function () {
@@ -13,7 +13,6 @@
 
   if (!fabAI || !popup) return;
 
-  // ── Session ID (persist across page — reset on close) ─────
   let isOpen    = false;
   let sessionId = '';
 
@@ -49,42 +48,154 @@
     }
   });
 
-  // ── Helpers ───────────────────────────────────────────────
+  // ── Scroll to bottom ──────────────────────────────────────
   function scrollBottom() {
     if (chatBody) chatBody.scrollTop = chatBody.scrollHeight;
   }
 
-  function appendMessage(text, sender) {
-    const wrapper = document.createElement('div');
-    wrapper.className = sender === 'user' ? 'user-message' : 'ai-message';
+  // ── Parse [LINKS: ...] and render project buttons ─────────
+  function parseLinks(text) {
+    const linkRegex = /\[LINKS:\s*(.*?)\]/gi;
+    const buttons   = [];
+    const cleaned   = text.replace(linkRegex, (_, content) => {
+      const parts = content.split(',').map(p => p.trim());
+      parts.forEach(part => {
+        const [key, ...rest] = part.split('=');
+        const url = rest.join('=').trim();
+        if (url && url !== '' && url !== 'null' && url !== 'undefined') {
+          buttons.push({ type: key.trim(), url });
+        }
+      });
+      return ''; // remove from text
+    });
+    return { text: cleaned.trim(), buttons };
+  }
 
-    if (sender === 'ai') {
-      const dot = document.createElement('div');
-      dot.className   = 'ai-msg-dot';
-      dot.innerHTML   = '<i class="bi bi-stars"></i>';
-      dot.style.cssText = 'width:26px;height:26px;min-width:26px;background:#111111;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:#ffffff;flex-shrink:0;';
-      wrapper.appendChild(dot);
+  // ── Format text: bold, bullets ────────────────────────────
+  function formatText(text) {
+    // Bold **text**
+    text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    // Newlines
+    text = text.replace(/\n/g, '<br>');
+    return text;
+  }
+
+  // ── Build project link buttons ────────────────────────────
+  function buildLinkButtons(buttons) {
+    if (!buttons.length) return null;
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex; gap:6px; flex-wrap:wrap; margin-top:10px;';
+
+    buttons.forEach(btn => {
+      const a = document.createElement('a');
+      a.href    = btn.url;
+      a.target  = '_blank';
+      a.rel     = 'noopener noreferrer';
+
+      const icons = { github: 'bi-github', demo: 'bi-globe', linkedin: 'bi-linkedin' };
+      const labels = { github: 'GitHub', demo: 'Live Demo', linkedin: 'LinkedIn' };
+      const icon  = icons[btn.type] || 'bi-link-45deg';
+      const label = labels[btn.type] || btn.type;
+
+      a.innerHTML = `<i class="bi ${icon}" style="font-size:0.8rem;"></i> ${label}`;
+      a.style.cssText = `
+        display: inline-flex; align-items: center; gap: 5px;
+        background: #111111; color: #ffffff;
+        padding: 5px 12px; border-radius: 6px;
+        font-size: 0.75rem; font-weight: 600;
+        text-decoration: none;
+        transition: opacity 0.2s;
+      `;
+      a.addEventListener('mouseenter', () => a.style.opacity = '0.8');
+      a.addEventListener('mouseleave', () => a.style.opacity = '1');
+      row.appendChild(a);
+    });
+    return row;
+  }
+
+  // ── Typewriter effect for AI messages ─────────────────────
+  function typewriterEffect(bubble, html, onDone) {
+    // Strip HTML tags for typewriter, then render full HTML at end
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    const plainText = tempDiv.textContent || '';
+
+    let i = 0;
+    const speed = 8; // ms per character — fast and smooth
+    bubble.innerHTML = '';
+
+    function type() {
+      if (i < plainText.length) {
+        bubble.textContent += plainText[i++];
+        scrollBottom();
+        setTimeout(type, speed);
+      } else {
+        // Show full formatted HTML after typewriter completes
+        bubble.innerHTML = html;
+        scrollBottom();
+        if (onDone) onDone();
+      }
     }
+    type();
+  }
+
+  // ── Append AI message with typewriter ─────────────────────
+  function appendAIMessage(text) {
+    const { text: cleanText, buttons } = parseLinks(text);
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'ai-message';
+    wrapper.style.cssText = 'display:flex; align-items:flex-end; gap:8px;';
+
+    const dot = document.createElement('div');
+    dot.className = 'ai-msg-dot';
+    dot.innerHTML = '<i class="bi bi-stars"></i>';
+    dot.style.cssText = 'width:26px;height:26px;min-width:26px;background:#111111;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:#ffffff;flex-shrink:0;';
 
     const bubble = document.createElement('div');
-    bubble.className = sender === 'user' ? 'user-bubble' : 'ai-bubble';
+    bubble.className = 'ai-bubble';
 
-    // Render newlines
-    bubble.innerHTML = text.replace(/\n/g, '<br/>');
+    wrapper.appendChild(dot);
+    wrapper.appendChild(bubble);
+    if (chatBody) chatBody.appendChild(wrapper);
+    scrollBottom();
+
+    const formattedHTML = formatText(cleanText);
+
+    // Typewriter, then add buttons
+    typewriterEffect(bubble, formattedHTML, () => {
+      if (buttons.length) {
+        const btnRow = buildLinkButtons(buttons);
+        if (btnRow) bubble.appendChild(btnRow);
+        scrollBottom();
+      }
+    });
+  }
+
+  // ── Append user message ───────────────────────────────────
+  function appendUserMessage(text) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'user-message';
+    wrapper.style.cssText = 'display:flex; justify-content:flex-end;';
+
+    const bubble = document.createElement('div');
+    bubble.className = 'user-bubble';
+    bubble.textContent = text;
 
     wrapper.appendChild(bubble);
     if (chatBody) chatBody.appendChild(wrapper);
     scrollBottom();
   }
 
+  // ── Typing indicator ──────────────────────────────────────
   function appendTyping() {
     const wrapper = document.createElement('div');
     wrapper.className = 'ai-message';
     wrapper.id = 'typingIndicator';
+    wrapper.style.cssText = 'display:flex; align-items:flex-end; gap:8px;';
 
     const dot = document.createElement('div');
-    dot.className   = 'ai-msg-dot';
-    dot.innerHTML   = '<i class="bi bi-stars"></i>';
+    dot.innerHTML = '<i class="bi bi-stars"></i>';
     dot.style.cssText = 'width:26px;height:26px;min-width:26px;background:#111111;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:#ffffff;flex-shrink:0;';
 
     const typing = document.createElement('div');
@@ -108,30 +219,19 @@
       const res = await fetch(CONFIG.API_BASE_URL + '/ai/chat', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({
-          message:    text,
-          session_id: sessionId,
-        }),
+        body:    JSON.stringify({ message: text, session_id: sessionId }),
       });
 
-      if (res.status === 429) {
-        return "You've sent too many messages. Please wait a bit and try again.";
-      }
-      if (res.status === 503) {
-        return "AI Assistant is not configured yet. Please check back soon.";
-      }
-      if (!res.ok) {
-        return "Something went wrong. Please try again.";
-      }
+      if (res.status === 429) return "You've sent too many messages. Please wait a bit. 😊";
+      if (res.status === 503) return "AI Assistant is not configured yet.";
+      if (!res.ok) return "Something went wrong. Please try again.";
 
       const data = await res.json();
-      // Save session ID for conversation continuity
       if (data.session_id) sessionId = data.session_id;
       return data.reply || "I didn't get a response. Please try again.";
 
-    } catch (err) {
-      // Backend offline — friendly fallback
-      return "I can't connect to the server right now. Please make sure the backend is running.";
+    } catch {
+      return "I can't connect right now. Please make sure the backend is running.";
     }
   }
 
@@ -139,33 +239,23 @@
   if (chatForm) {
     chatForm.addEventListener('submit', async function (e) {
       e.preventDefault();
-
       const text = chatInput ? chatInput.value.trim() : '';
       if (!text) return;
 
-      if (chatInput) {
-        chatInput.value    = '';
-        chatInput.disabled = true;
-      }
+      if (chatInput) { chatInput.value = ''; chatInput.disabled = true; }
 
-      // Append user bubble
-      appendMessage(text, 'user');
+      appendUserMessage(text);
       appendTyping();
 
-      // Call backend
       const reply = await sendMessage(text);
 
       removeTyping();
-      appendMessage(reply, 'ai');
+      appendAIMessage(reply);
 
-      if (chatInput) {
-        chatInput.disabled = false;
-        chatInput.focus();
-      }
+      if (chatInput) { chatInput.disabled = false; chatInput.focus(); }
     });
   }
 
-  // Enter key to submit
   if (chatInput) {
     chatInput.addEventListener('keydown', function (e) {
       if (e.key === 'Enter' && !e.shiftKey) {
