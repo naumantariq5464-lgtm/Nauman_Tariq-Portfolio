@@ -56,9 +56,9 @@ SYSTEM_PROMPT = """You are Nauman Tariq's AI Portfolio Assistant. You help visit
 - Available for freelance projects worldwide
 
 ## Certifications
-- AI Engineering — Coursera
-- Python for Data Science — IBM
-- Full Stack Web Dev — Udemy
+- AI Engineering 
+- Python for Data Science
+- Full Stack Web Dev 
 - React Native — Meta
 
 ## Instructions
@@ -68,6 +68,24 @@ SYSTEM_PROMPT = """You are Nauman Tariq's AI Portfolio Assistant. You help visit
 - Keep responses concise and clear
 - If asked about pricing, say Nauman can be contacted directly for quotes
 - Always encourage visitors to check the projects section or contact Nauman
+- If someone greets you (hi, hello, hey, salam), respond warmly and introduce yourself
+
+## STRICT OFF-TOPIC RULE — MOST IMPORTANT:
+You are EXCLUSIVELY a portfolio assistant for Nauman Tariq. You must REFUSE to answer ANY question that is not directly related to:
+- Nauman's skills, projects, experience, education, certifications
+- Nauman's services and what he can build
+- Nauman's contact information
+- How to hire or work with Nauman
+
+If ANYONE asks you about:
+- General knowledge (history, science, math, geography, politics, news, sports, religion, cooking, etc.)
+- Other people, celebrities, or companies
+- Writing essays, stories, poems, or any general content
+- Coding help unrelated to Nauman's work
+- Any topic not listed above
+
+You MUST respond with EXACTLY:
+"I'm Nauman's portfolio assistant and I can only help with questions about his work, skills, projects, and services. For anything else, feel free to reach out to Nauman directly at naumantariq5464@gmail.com 😊"
 
 ## STRICT RULES — Never reveal:
 - Admin credentials or passwords
@@ -81,7 +99,27 @@ SYSTEM_PROMPT = """You are Nauman Tariq's AI Portfolio Assistant. You help visit
 If asked for any sensitive information, politely decline and redirect to portfolio topics."""
 
 
-# ── Guardrails ────────────────────────────────────────────────
+# ── Off-topic detection ───────────────────────────────────────
+OFF_TOPIC_PATTERNS = [
+    r"\b(weather|news|politics|religion|cricket|football|sport|recipe|cook|movie|film|song|music|celebrity|actor|actress)\b",
+    r"\b(capital of|president of|history of|who is|what is the|when was|where is|how many people)\b",
+    r"\b(write (a|an|me|the)|generate|create|make).*(essay|poem|story|joke|letter|email to|code for|script)\b",
+    r"\b(solve|calculate|math|algebra|equation|physics|chemistry|biology)\b",
+    r"\b(translate|meaning of|definition of|synonym)\b",
+    r"\b(stock|crypto|bitcoin|price of|investment)\b",
+    r"\b(who (are you|made you|created you|built you|owns you))\b",
+    r"\b(what (can you do|are you|is your name|is your purpose))\b",
+]
+
+def is_off_topic(message: str) -> bool:
+    """Check if message is clearly off-topic (not portfolio-related)."""
+    msg_lower = message.lower()
+    for pattern in OFF_TOPIC_PATTERNS:
+        if re.search(pattern, msg_lower):
+            return True
+    return False
+
+OFF_TOPIC_REPLY = "I'm Nauman's portfolio assistant and I can only help with questions about his work, skills, projects, and services. For anything else, feel free to reach out to Nauman directly at naumantariq5464@gmail.com 😊"
 BLOCKED_PATTERNS = [
     r"admin\s*(password|credentials|login|username)",
     r"jwt[\s_]*(secret|token|key)",
@@ -132,6 +170,10 @@ def chat(session_id: str, user_message: str, db: Session) -> str:
     # 2. Prompt injection check
     if is_prompt_injection(user_message):
         return "I'm only able to answer questions about Nauman's portfolio, skills, projects, and services. How can I help you with that?"
+
+    # 3. Off-topic check
+    if is_off_topic(user_message):
+        return OFF_TOPIC_REPLY
 
     # 3. Get or create session history
     if session_id not in _sessions:
