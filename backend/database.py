@@ -1,23 +1,22 @@
 """
 database.py — SQLAlchemy engine, session factory, and Base declarative class.
+Uses psycopg (v3) driver which is compatible with Python 3.14.
 """
 
-from sqlalchemy import create_engine, event
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 from sqlalchemy.pool import NullPool
 from config import settings
 
 
-# ── Engine ────────────────────────────────────────────────────────────────────
-# NullPool used for serverless/Neon PostgreSQL to avoid stale connections
+# ── Engine ────────────────────────────────────────────────────
 engine = create_engine(
     settings.database_url,
     poolclass=NullPool,
-    echo=settings.debug,           # Log SQL in dev, silent in prod
-    connect_args={"sslmode": "require"} if settings.is_production else {},
+    echo=settings.debug,
 )
 
-# ── Session factory ───────────────────────────────────────────────────────────
+# ── Session factory ───────────────────────────────────────────
 SessionLocal = sessionmaker(
     bind=engine,
     autocommit=False,
@@ -25,15 +24,26 @@ SessionLocal = sessionmaker(
     expire_on_commit=False,
 )
 
-# ── Base class for all models ─────────────────────────────────────────────────
+# ── Base class for all models ─────────────────────────────────
 class Base(DeclarativeBase):
     pass
 
 
-# ── Dependency — yields a DB session, always closes it ───────────────────────
+# ── DB dependency ─────────────────────────────────────────────
 def get_db():
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
+
+
+# ── Test connection ───────────────────────────────────────────
+def test_connection():
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+        return True
+    except Exception as e:
+        print(f"[DB] Connection failed: {e}")
+        return False
