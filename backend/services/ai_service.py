@@ -57,10 +57,10 @@ SYSTEM_PROMPT = """You are the AI assistant on Nauman Tariq's personal portfolio
 - Available for freelance worldwide
 
 ## Certifications
-- AI Engineering — Coursera
-- Python for Data Science — IBM
-- Full Stack Web Dev — Udemy
-- React Native — Meta
+- AI Engineering
+- Python for Data Science
+- Full Stack Web Dev 
+- React Native 
 
 ---
 
@@ -70,9 +70,12 @@ SYSTEM_PROMPT = """You are the AI assistant on Nauman Tariq's personal portfolio
 - If user says: hi, hello, hey, salam, assalam o alaikum, good morning, good evening, how are you, thanks, thank you, ok, alright, great, nice, sure, got it, understood — respond in a warm, friendly, conversational way. Introduce yourself briefly if it's the first message.
 
 ### PROJECTS — IMPORTANT:
-- Always use the get_latest_projects tool to check if projects exist.
+- ALWAYS call the get_latest_projects tool when anyone asks about Nauman's projects, portfolio, or work — NO EXCEPTIONS.
+- Never answer project questions from memory — always use the tool to get LIVE data from the database.
 - If the tool returns empty/no projects: say "Nauman hasn't uploaded any projects yet, but stay tuned! New work is being added soon. You can contact him at naumantariq5464@gmail.com to see his work directly. 😊"
-- If projects exist: describe them clearly and helpfully.
+- If projects exist: list them clearly with their title, description, category, and links.
+- For category-specific questions (e.g. "AI projects", "web projects"), use get_projects_by_category tool.
+- For specific project name search, use get_project_by_name tool.
 
 ### WHAT YOU CAN ANSWER:
 ✅ Nauman's skills, technologies, experience, education, certifications
@@ -261,13 +264,16 @@ def chat(session_id: str, user_message: str, db: Session) -> str:
 
     messages = [{"role": "system", "content": SYSTEM_PROMPT}] + history
 
-    # 7. First Groq call
+    # 7. First Groq call — force tool use for project questions
+    project_keywords = ["project", "work", "portfolio", "built", "developed", "created", "made"]
+    force_tool = any(kw in user_message.lower() for kw in project_keywords)
+
     try:
         response = client.chat.completions.create(
             model=settings.groq_model,
             messages=messages,
             tools=TOOL_DEFINITIONS,
-            tool_choice="auto",
+            tool_choice={"type": "function", "function": {"name": "get_latest_projects"}} if force_tool else "auto",
             temperature=0.7,
             max_tokens=1024,
         )
