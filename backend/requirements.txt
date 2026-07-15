@@ -24,6 +24,7 @@ slowapi
 # ── Third-Party Services ──────────────────────────────────────
 cloudinary
 resend
+groq
 
 # ── HTTP Client ───────────────────────────────────────────────
 httpx
