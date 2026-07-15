@@ -69,16 +69,29 @@ SYSTEM_PROMPT = """You are the AI assistant on Nauman Tariq's personal portfolio
 ## RESPONSE FORMATTING RULES — VERY IMPORTANT:
 
 ### For PROJECT responses:
-- Write project title in bold like **Project Name**
-- Write a clean 1-2 line description
-- Write tech stack on one line: 🛠 Tech: Python, FastAPI, PostgreSQL
-- DO NOT write raw URLs or links — just end with: [LINKS: github={github_url}, demo={demo_url}, linkedin={linkedin_url}]
-- The frontend will convert these into clickable buttons automatically
-- Example format:
-  **Attendance Management System**
-  A full-stack web app for managing student attendance with role-based access for Admin, Teacher, and Student.
-  🛠 Tech: Python, FastAPI, PostgreSQL, React
-  [LINKS: github=https://github.com/..., demo=https://..., linkedin=]
+- Write EACH project separately with its OWN links tag immediately after it
+- Format for EACH project:
+
+**Project Name**
+Short description here.
+🛠 Tech: Python, FastAPI, React
+[LINKS: github=URL, demo=URL, linkedin=URL]
+
+- Then a blank line, then the NEXT project in same format
+- NEVER combine links from multiple projects into one [LINKS: ] tag
+- Each project MUST have its own [LINKS: ] tag right below it
+- If a link is empty or not available, skip that key entirely from [LINKS: ]
+- Example with 2 projects:
+
+**AMS System**
+A web-based attendance management system with role-based access.
+🛠 Tech: Python, FastAPI, PostgreSQL
+[LINKS: github=https://github.com/..., demo=https://...]
+
+**AI Chatbot**
+An intelligent customer support agent with memory and tool-calling.
+🛠 Tech: LangChain, FastAPI, Groq
+[LINKS: github=https://github.com/..., linkedin=https://linkedin.com/...]
 
 ### For SKILLS responses:
 - Group skills by category with emoji headers

@@ -53,22 +53,45 @@
     if (chatBody) chatBody.scrollTop = chatBody.scrollHeight;
   }
 
-  // ── Parse [LINKS: ...] and render project buttons ─────────
-  function parseLinks(text) {
-    const linkRegex = /\[LINKS:\s*(.*?)\]/gi;
-    const buttons   = [];
-    const cleaned   = text.replace(linkRegex, (_, content) => {
-      const parts = content.split(',').map(p => p.trim());
-      parts.forEach(part => {
-        const [key, ...rest] = part.split('=');
-        const url = rest.join('=').trim();
-        if (url && url !== '' && url !== 'null' && url !== 'undefined') {
-          buttons.push({ type: key.trim(), url });
+  // ── Parse [LINKS: ...] — one per project, render inline ────
+  function parseAndRenderAIText(rawText) {
+    // Split text by [LINKS: ...] tags
+    const parts = rawText.split(/\[LINKS:\s*(.*?)\]/gi);
+    // parts = [text, links1, text, links2, text, ...]
+
+    const container = document.createElement('div');
+
+    for (let i = 0; i < parts.length; i++) {
+      if (i % 2 === 0) {
+        // Text part
+        const textChunk = parts[i].trim();
+        if (textChunk) {
+          const p = document.createElement('div');
+          p.innerHTML = formatText(textChunk);
+          p.style.marginBottom = '4px';
+          container.appendChild(p);
         }
-      });
-      return ''; // remove from text
-    });
-    return { text: cleaned.trim(), buttons };
+      } else {
+        // Links part — build buttons for THIS project
+        const linkStr = parts[i];
+        const buttons = [];
+        linkStr.split(',').forEach(part => {
+          const eqIdx = part.indexOf('=');
+          if (eqIdx === -1) return;
+          const key = part.slice(0, eqIdx).trim();
+          const url = part.slice(eqIdx + 1).trim();
+          if (url && url !== '' && url !== 'null' && url !== 'undefined' && url.startsWith('http')) {
+            buttons.push({ type: key, url });
+          }
+        });
+        if (buttons.length) {
+          const btnRow = buildLinkButtons(buttons);
+          btnRow.style.marginBottom = '12px';
+          container.appendChild(btnRow);
+        }
+      }
+    }
+    return container;
   }
 
   // ── Format text: bold, bullets ────────────────────────────
@@ -113,25 +136,19 @@
     return row;
   }
 
-  // ── Typewriter effect for AI messages ─────────────────────
-  function typewriterEffect(bubble, html, onDone) {
-    // Strip HTML tags for typewriter, then render full HTML at end
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = html;
-    const plainText = tempDiv.textContent || '';
-
+  // ── Typewriter on plain text, then swap to full HTML ────────
+  function typewriterEffect(bubble, contentContainer, onDone) {
+    const plainText = contentContainer.textContent || '';
     let i = 0;
-    const speed = 8; // ms per character — fast and smooth
     bubble.innerHTML = '';
-
     function type() {
       if (i < plainText.length) {
         bubble.textContent += plainText[i++];
         scrollBottom();
-        setTimeout(type, speed);
+        setTimeout(type, 8);
       } else {
-        // Show full formatted HTML after typewriter completes
-        bubble.innerHTML = html;
+        bubble.innerHTML = '';
+        bubble.appendChild(contentContainer);
         scrollBottom();
         if (onDone) onDone();
       }
@@ -141,16 +158,14 @@
 
   // ── Append AI message with typewriter ─────────────────────
   function appendAIMessage(text) {
-    const { text: cleanText, buttons } = parseLinks(text);
-
     const wrapper = document.createElement('div');
     wrapper.className = 'ai-message';
-    wrapper.style.cssText = 'display:flex; align-items:flex-end; gap:8px;';
+    wrapper.style.cssText = 'display:flex; align-items:flex-start; gap:8px;';
 
     const dot = document.createElement('div');
     dot.className = 'ai-msg-dot';
     dot.innerHTML = '<i class="bi bi-stars"></i>';
-    dot.style.cssText = 'width:26px;height:26px;min-width:26px;background:#111111;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:#ffffff;flex-shrink:0;';
+    dot.style.cssText = 'width:26px;height:26px;min-width:26px;background:#111111;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:#ffffff;flex-shrink:0;margin-top:4px;';
 
     const bubble = document.createElement('div');
     bubble.className = 'ai-bubble';
@@ -160,16 +175,11 @@
     if (chatBody) chatBody.appendChild(wrapper);
     scrollBottom();
 
-    const formattedHTML = formatText(cleanText);
+    // Build rich content (text + per-project buttons)
+    const contentContainer = parseAndRenderAIText(text);
 
-    // Typewriter, then add buttons
-    typewriterEffect(bubble, formattedHTML, () => {
-      if (buttons.length) {
-        const btnRow = buildLinkButtons(buttons);
-        if (btnRow) bubble.appendChild(btnRow);
-        scrollBottom();
-      }
-    });
+    // Typewriter then reveal full content
+    typewriterEffect(bubble, contentContainer);
   }
 
   // ── Append user message ───────────────────────────────────
