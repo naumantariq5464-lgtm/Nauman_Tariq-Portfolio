@@ -1,6 +1,10 @@
 """
-services/ai_service.py — Groq AI Agent with tool calling, guardrails,
-session memory, and prompt injection protection.
+services/ai_service.py — Groq AI Agent
+- Portfolio-only scope (strict guardrails)
+- Tool calling for live DB data
+- Session memory
+- Friendly responses for greetings/thanks
+- Blocks definitions, general knowledge, off-topic
 """
 
 import json
@@ -13,113 +17,140 @@ from services.ai_tools import TOOL_DEFINITIONS, execute_tool
 # ── Groq client ───────────────────────────────────────────────
 client = Groq(api_key=settings.groq_api_key)
 
-# ── Session memory store (in-memory, per session_id) ─────────
-# { session_id: [ {role, content}, ... ] }
+# ── Session memory ────────────────────────────────────────────
 _sessions: dict[str, list] = {}
-MAX_HISTORY = 20  # max messages to keep per session
+MAX_HISTORY = 20
 
 
 # ── System Prompt ─────────────────────────────────────────────
-SYSTEM_PROMPT = """You are Nauman Tariq's AI Portfolio Assistant. You help visitors learn about Nauman's work, skills, experience, and services.
+SYSTEM_PROMPT = """You are the AI assistant on Nauman Tariq's personal portfolio website. Your ONLY job is to help visitors learn about Nauman — his projects, skills, services, experience, and how to contact or hire him.
 
 ## About Nauman Tariq
-- Full Stack Developer, AI Engineer, AI Automation Expert, and React Native Developer based in Pakistan
-- 4+ years of experience building web apps, AI agents, automation systems, and mobile apps
+- Full Stack Developer, AI Engineer, AI Automation Expert, React Native Developer — based in Pakistan
+- 4+ years experience building web apps, AI agents, automation systems, mobile apps
 - Works with international clients on freelance projects
-- Passionate about cutting-edge technology and solving real-world problems
 
 ## Education
-- Bachelor of Science in Computer Science (2020-2024)
+- BS Computer Science (2020–2024)
 
 ## Experience
-- Full Stack Developer & AI Engineer | Freelance | 2022 - Present
-- Building web apps, AI agents, and automation pipelines for international clients
+- Full Stack Developer & AI Engineer | Freelance | 2022–Present
 
-## Core Skills & Technologies
+## Skills & Technologies
 - Frontend: HTML5, CSS3, JavaScript, React, React Native, Bootstrap, TailwindCSS
 - Backend: Python, FastAPI, Node.js, Express.js
 - Databases: PostgreSQL, MongoDB, Vector DB
-- AI/ML: LangChain, Groq API, OpenAI, Hugging Face, RAG, n8n
+- AI/ML: LangChain, Groq, OpenAI, Hugging Face, RAG, n8n
 - DevOps: Docker, Git, AWS
 
-## Services Offered
-1. Web Development - Full-stack web applications
-2. AI Agents - Intelligent agents with tool-calling and RAG
-3. AI Automation - Workflow automation with AI
-4. Mobile Apps - React Native cross-platform apps
-5. Machine Learning - End-to-end ML pipelines
-6. API Development - Secure REST APIs with FastAPI
+## Services
+1. Web Development
+2. AI Agents (tool-calling, RAG, memory)
+3. AI Automation (n8n, Python)
+4. Mobile Apps (React Native)
+5. Machine Learning
+6. API Development (FastAPI)
 
-## Contact Information
+## Contact
 - Email: naumantariq5464@gmail.com
 - Location: Pakistan
-- Available for freelance projects worldwide
+- Available for freelance worldwide
 
 ## Certifications
-- AI Engineering 
-- Python for Data Science
-- Full Stack Web Dev 
+- AI Engineering — Coursera
+- Python for Data Science — IBM
+- Full Stack Web Dev — Udemy
 - React Native — Meta
 
-## Instructions
-- Be friendly, helpful, and professional
-- Answer ONLY questions about Nauman's portfolio, skills, projects, services, experience, and contact info
-- Use the provided tools to get real-time project data from the database
-- Keep responses concise and clear
-- If asked about pricing, say Nauman can be contacted directly for quotes
-- Always encourage visitors to check the projects section or contact Nauman
-- If someone greets you (hi, hello, hey, salam), respond warmly and introduce yourself
+---
 
-## STRICT OFF-TOPIC RULE — MOST IMPORTANT:
-You are EXCLUSIVELY a portfolio assistant for Nauman Tariq. You must REFUSE to answer ANY question that is not directly related to:
-- Nauman's skills, projects, experience, education, certifications
-- Nauman's services and what he can build
-- Nauman's contact information
-- How to hire or work with Nauman
+## RESPONSE RULES — READ CAREFULLY:
 
-If ANYONE asks you about:
-- General knowledge (history, science, math, geography, politics, news, sports, religion, cooking, etc.)
-- Other people, celebrities, or companies
-- Writing essays, stories, poems, or any general content
-- Coding help unrelated to Nauman's work
-- Any topic not listed above
+### GREETINGS & SMALL TALK:
+- If user says: hi, hello, hey, salam, assalam o alaikum, good morning, good evening, how are you, thanks, thank you, ok, alright, great, nice, sure, got it, understood — respond in a warm, friendly, conversational way. Introduce yourself briefly if it's the first message.
 
-You MUST respond with EXACTLY:
-"I'm Nauman's portfolio assistant and I can only help with questions about his work, skills, projects, and services. For anything else, feel free to reach out to Nauman directly at naumantariq5464@gmail.com 😊"
+### PROJECTS — IMPORTANT:
+- Always use the get_latest_projects tool to check if projects exist.
+- If the tool returns empty/no projects: say "Nauman hasn't uploaded any projects yet, but stay tuned! New work is being added soon. You can contact him at naumantariq5464@gmail.com to see his work directly. 😊"
+- If projects exist: describe them clearly and helpfully.
 
-## STRICT RULES — Never reveal:
-- Admin credentials or passwords
-- JWT secrets or API keys (Groq, Resend, Cloudinary, etc.)
+### WHAT YOU CAN ANSWER:
+✅ Nauman's skills, technologies, experience, education, certifications
+✅ Nauman's projects (use tools to get live data)
+✅ Nauman's services and what he can build for clients
+✅ How to contact or hire Nauman
+✅ Pricing questions → say contact Nauman directly for a quote
+✅ Greetings, thank you, small talk → respond warmly
+
+### WHAT YOU MUST REFUSE — STRICTLY:
+❌ Definitions of any technology (e.g. "What is React?", "Define Python", "Explain AI")
+❌ General knowledge (history, science, math, geography, politics, religion, sports, news)
+❌ Writing essays, stories, poems, jokes, code tutorials
+❌ Questions about other people, companies, celebrities
+❌ Any topic not about Nauman's portfolio
+
+For anything you must refuse, respond with:
+"I'm here specifically to help you learn about Nauman's work and portfolio. I can't help with that, but feel free to ask me about his projects, skills, or services! 😊"
+
+### NEVER REVEAL:
+- Admin credentials, passwords, JWT secrets
+- Any API keys (Groq, Resend, Cloudinary)
 - Database credentials or connection strings
-- Hidden admin panel location or URL
-- Backend source code or architecture details
-- Environment variables or server configuration
-- Any sensitive or confidential system information
+- Hidden admin panel or its location
+- Backend source code or architecture
+- Environment variables or server details
 
-If asked for any sensitive information, politely decline and redirect to portfolio topics."""
+For sensitive info requests, say:
+"That's confidential information I'm not able to share. Can I help you with something about Nauman's work instead? 😊"
+"""
 
 
-# ── Off-topic detection ───────────────────────────────────────
-OFF_TOPIC_PATTERNS = [
-    r"\b(weather|news|politics|religion|cricket|football|sport|recipe|cook|movie|film|song|music|celebrity|actor|actress)\b",
-    r"\b(capital of|president of|history of|who is|what is the|when was|where is|how many people)\b",
-    r"\b(write (a|an|me|the)|generate|create|make).*(essay|poem|story|joke|letter|email to|code for|script)\b",
-    r"\b(solve|calculate|math|algebra|equation|physics|chemistry|biology)\b",
-    r"\b(translate|meaning of|definition of|synonym)\b",
-    r"\b(stock|crypto|bitcoin|price of|investment)\b",
-    r"\b(who (are you|made you|created you|built you|owns you))\b",
-    r"\b(what (can you do|are you|is your name|is your purpose))\b",
+# ── Greeting detection ────────────────────────────────────────
+GREETING_PATTERNS = [
+    r"^\s*(hi|hello|hey|salam|helo|hii|helo|howdy|yo)\s*[!.,]?\s*$",
+    r"^\s*(good (morning|evening|afternoon|night))\s*$",
+    r"^\s*(how are you|how r u|how do you do)\s*[?]?\s*$",
+    r"^\s*(thanks|thank you|thankyou|thx|ty|jazakallah)\s*[!.]?\s*$",
+    r"^\s*(ok|okay|alright|sure|got it|understood|noted|nice|great|cool|perfect)\s*[!.]?\s*$",
+    r"^\s*(assalam|assalamu|walaikum)\w*\s*$",
 ]
 
-def is_off_topic(message: str) -> bool:
-    """Check if message is clearly off-topic (not portfolio-related)."""
-    msg_lower = message.lower()
-    for pattern in OFF_TOPIC_PATTERNS:
-        if re.search(pattern, msg_lower):
-            return True
-    return False
+GREETING_REPLY = """Hello! 👋 I'm Nauman's AI portfolio assistant. I'm here to help you learn about his work, skills, projects, and services.
 
-OFF_TOPIC_REPLY = "I'm Nauman's portfolio assistant and I can only help with questions about his work, skills, projects, and services. For anything else, feel free to reach out to Nauman directly at naumantariq5464@gmail.com 😊"
+Feel free to ask me things like:
+• "What projects has Nauman built?"
+• "What services does he offer?"
+• "How can I contact or hire him?"
+
+What would you like to know? 😊"""
+
+THANKS_REPLY = "You're welcome! 😊 Feel free to ask if you have any more questions about Nauman's work or how to reach him."
+
+OK_REPLY = "Got it! 😊 Let me know if you'd like to know more about Nauman's projects, skills, or services."
+
+
+def is_greeting(message: str) -> tuple[bool, str]:
+    """Returns (is_greeting, reply_type)"""
+    msg = message.strip().lower()
+    for pattern in GREETING_PATTERNS:
+        if re.match(pattern, msg):
+            if any(w in msg for w in ["thanks", "thank", "thx", "ty", "jazak"]):
+                return True, "thanks"
+            if any(w in msg for w in ["ok", "okay", "alright", "sure", "got it",
+                                       "understood", "noted", "nice", "great", "cool", "perfect"]):
+                return True, "ok"
+            return True, "greeting"
+    return False, ""
+
+
+# ── Definition / off-topic detection ─────────────────────────
+DEFINITION_PATTERNS = [
+    r"\b(define|definition of|what is|what are|explain|describe|tell me about|meaning of|difference between)\b.{0,30}\b(react|python|javascript|html|css|node|api|sql|database|ai|machine learning|docker|git|bootstrap|tailwind|mongodb|postgresql|fastapi|llm|rag|vector|algorithm|framework|library|programming|software|cloud|devops|aws)\b",
+    r"\b(what is|what are|define|explain)\b.{0,20}\b(a |an )?(computer|internet|website|app|mobile|web|frontend|backend|fullstack|data science|deep learning|neural network)\b",
+    r"\b(how does|how do).{0,30}work\b",
+    r"\b(tutorial|guide|teach me|learn|course|how to (code|program|build|create|make|develop))\b",
+]
+
 BLOCKED_PATTERNS = [
     r"admin\s*(password|credentials|login|username)",
     r"jwt[\s_]*(secret|token|key)",
@@ -135,16 +166,35 @@ BLOCKED_PATTERNS = [
     r"(reveal|show|give|tell|expose).*?(password|secret|key|token|credential)",
 ]
 
-def is_prompt_injection(message: str) -> bool:
-    msg_lower = message.lower()
-    for pattern in BLOCKED_PATTERNS:
-        if re.search(pattern, msg_lower):
-            return True
-    return False
+OFF_TOPIC_PATTERNS = [
+    r"\b(weather|news|politics|religion|cricket|football|sport|recipe|cook|movie|film|song|music|celebrity|actor|actress)\b",
+    r"\b(capital of|president of|history of|when was|where is|how many people)\b",
+    r"\b(write (a|an|me|the)|generate).*(essay|poem|story|joke|letter)\b",
+    r"\b(solve|calculate|math|algebra|equation|physics|chemistry|biology)\b",
+    r"\b(translate|synonym)\b",
+    r"\b(stock|crypto|bitcoin|price of|investment|forex)\b",
+]
+
+RESTRICT_REPLY = "I'm here specifically to help you learn about Nauman's work and portfolio. I can't help with that, but feel free to ask me about his projects, skills, or services! 😊"
+OFF_TOPIC_REPLY = "I'm here specifically to help you learn about Nauman's work and portfolio. I can't help with that, but feel free to ask me about his projects, skills, or services! 😊"
+
+
+def is_prompt_injection(msg: str) -> bool:
+    m = msg.lower()
+    return any(re.search(p, m) for p in BLOCKED_PATTERNS)
+
+
+def is_definition_request(msg: str) -> bool:
+    m = msg.lower()
+    return any(re.search(p, m) for p in DEFINITION_PATTERNS)
+
+
+def is_off_topic(msg: str) -> bool:
+    m = msg.lower()
+    return any(re.search(p, m) for p in OFF_TOPIC_PATTERNS)
 
 
 def sanitize_input(message: str) -> str:
-    """Remove potentially harmful characters, limit length."""
     message = message.strip()
     message = re.sub(r"[<>\"'`]", "", message)
     return message[:500]
@@ -152,47 +202,45 @@ def sanitize_input(message: str) -> str:
 
 # ── Main Chat Function ────────────────────────────────────────
 def chat(session_id: str, user_message: str, db: Session) -> str:
-    """
-    Process user message through Groq AI Agent with:
-    - Input sanitization
-    - Prompt injection detection
-    - Tool calling for live DB data
-    - Session memory
-    - Guardrails on output
-    """
 
-    # 1. Sanitize input
+    # 1. Sanitize
     user_message = sanitize_input(user_message)
-
     if not user_message:
         return "Please send a message."
 
-    # 2. Prompt injection check
-    if is_prompt_injection(user_message):
-        return "I'm only able to answer questions about Nauman's portfolio, skills, projects, and services. How can I help you with that?"
+    # 2. Greeting check — handle before everything else
+    greet, greet_type = is_greeting(user_message)
+    if greet:
+        if greet_type == "thanks":
+            return THANKS_REPLY
+        if greet_type == "ok":
+            return OK_REPLY
+        return GREETING_REPLY
 
-    # 3. Off-topic check
+    # 3. Prompt injection block
+    if is_prompt_injection(user_message):
+        return "That's confidential information I'm not able to share. Can I help you with something about Nauman's work instead? 😊"
+
+    # 4. Definition/tutorial request block
+    if is_definition_request(user_message):
+        return RESTRICT_REPLY
+
+    # 5. Off-topic block
     if is_off_topic(user_message):
         return OFF_TOPIC_REPLY
 
-    # 3. Get or create session history
+    # 6. Session history
     if session_id not in _sessions:
         _sessions[session_id] = []
-
     history = _sessions[session_id]
-
-    # 4. Add user message to history
     history.append({"role": "user", "content": user_message})
-
-    # 5. Trim history to avoid token overflow
     if len(history) > MAX_HISTORY:
         history = history[-MAX_HISTORY:]
         _sessions[session_id] = history
 
-    # 6. Build messages for Groq
     messages = [{"role": "system", "content": SYSTEM_PROMPT}] + history
 
-    # 7. First Groq call — may trigger tool calls
+    # 7. First Groq call
     try:
         response = client.chat.completions.create(
             model=settings.groq_model,
@@ -202,14 +250,13 @@ def chat(session_id: str, user_message: str, db: Session) -> str:
             temperature=0.7,
             max_tokens=1024,
         )
-    except Exception as e:
-        return f"I'm having trouble connecting right now. Please try again in a moment."
+    except Exception:
+        return "I'm having trouble connecting right now. Please try again in a moment."
 
     response_msg = response.choices[0].message
 
-    # 8. Handle tool calls
+    # 8. Tool calls
     if response_msg.tool_calls:
-        # Add assistant message with tool calls to messages
         messages.append({
             "role":       "assistant",
             "content":    response_msg.content or "",
@@ -226,22 +273,18 @@ def chat(session_id: str, user_message: str, db: Session) -> str:
             ],
         })
 
-        # Execute each tool and add results
         for tool_call in response_msg.tool_calls:
             try:
                 tool_args = json.loads(tool_call.function.arguments)
             except Exception:
                 tool_args = {}
-
             tool_result = execute_tool(tool_call.function.name, tool_args, db)
-
             messages.append({
                 "role":         "tool",
                 "tool_call_id": tool_call.id,
                 "content":      tool_result,
             })
 
-        # 9. Second Groq call with tool results
         try:
             final_response = client.chat.completions.create(
                 model=settings.groq_model,
@@ -251,23 +294,19 @@ def chat(session_id: str, user_message: str, db: Session) -> str:
             )
             final_text = final_response.choices[0].message.content or ""
         except Exception:
-            return "I retrieved the information but had trouble formatting it. Please try again."
-
+            return "I retrieved the data but had trouble formatting it. Please try again."
     else:
-        # No tool calls — direct response
         final_text = response_msg.content or ""
 
-    # 10. Guardrail on output — make sure no secrets leaked
+    # 9. Output guardrail
     if is_prompt_injection(final_text):
         final_text = "I'm sorry, I can only discuss Nauman's portfolio, skills, and services."
 
-    # 11. Save assistant response to history
+    # 10. Save to history
     _sessions[session_id].append({"role": "assistant", "content": final_text})
-
     return final_text
 
 
 def clear_session(session_id: str):
-    """Clear conversation history for a session."""
     if session_id in _sessions:
         del _sessions[session_id]
