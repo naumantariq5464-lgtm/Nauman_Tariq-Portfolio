@@ -4,8 +4,8 @@
    ============================================================ */
 
 const CONFIG = {
-  // Development — change to your deployed backend URL in production
-  API_BASE_URL: 'http://127.0.0.1:8000/api/v1',
+  // Production backend on Render
+  API_BASE_URL: 'https://nauman-tariq-portfolio-2.onrender.com/api/v1',
 
   // Token storage keys
   TOKEN_KEY:   'nt_access_token',
