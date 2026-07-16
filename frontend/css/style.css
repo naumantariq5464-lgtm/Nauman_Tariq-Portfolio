@@ -206,6 +206,28 @@ section, footer, nav, header, div {
   position: relative;
   overflow: hidden;
 }
+
+/* Hero background image — blurred, low opacity */
+.hero-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url('../assets/images/Hero Section Background.png');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  opacity: 0.10;
+  filter: blur(3px);
+  transform: scale(1.05); /* prevents blur edge white gaps */
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Keep all hero content above the background */
+.hero-section > * {
+  position: relative;
+  z-index: 1;
+}
 .hero-greeting {
   font-size: 1.1rem;
   font-weight: 500;
