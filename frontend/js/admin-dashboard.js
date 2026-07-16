@@ -211,10 +211,29 @@
     openModal('projectModal');
   };
 
+  // ── Custom confirm popup ──────────────────────────────────
+  function showConfirm(title, message, icon, onConfirm) {
+    document.getElementById('confirmTitle').textContent   = title;
+    document.getElementById('confirmMessage').textContent = message;
+    document.getElementById('confirmIcon').className      = `bi ${icon} confirm-icon-i`;
+    document.getElementById('confirmOkBtn').onclick = async () => {
+      closeModal('confirmModal');
+      await onConfirm();
+    };
+    openModal('confirmModal');
+  }
+
   window.deleteProject = async function (id) {
-    if (!confirm('Delete this project? This cannot be undone.')) return;
-    const res = await api(`/projects/${id}`, { method: 'DELETE' });
-    if (res !== null) { toast('Project deleted.'); loadProjects(); }
+    const p = projects.find(x => x.id === id);
+    showConfirm(
+      'Delete Project',
+      `Are you sure you want to delete "${p?.title || 'this project'}"? This cannot be undone.`,
+      'bi-trash3',
+      async () => {
+        const res = await api(`/projects/${id}`, { method: 'DELETE' });
+        if (res !== null) { toast('Project deleted.'); loadProjects(); }
+      }
+    );
   };
 
   // Save project
@@ -222,7 +241,13 @@
     const form = document.getElementById('projectForm');
     if (!form.reportValidity()) return;
 
-    const id  = document.getElementById('projectId').value;
+    const id      = document.getElementById('projectId').value;
+    const saveBtn = document.getElementById('saveProjectBtn');
+
+    // Show loading state
+    saveBtn.disabled   = true;
+    saveBtn.innerHTML  = '<span class="spinner-border spinner-border-sm me-2"></span>Saving...';
+
     const fd  = new FormData();
     fd.append('title',       document.getElementById('pTitle').value.trim());
     fd.append('description', document.getElementById('pDesc').value.trim());
@@ -240,6 +265,11 @@
     const endpoint = id ? `/projects/${id}` : '/projects/';
     const method   = id ? 'PUT' : 'POST';
     const res = await apiFetch(endpoint, { method, body: fd });
+
+    // Restore button
+    saveBtn.disabled  = false;
+    saveBtn.innerHTML = '<i class="bi bi-check-lg me-1"></i>Save Project';
+
     if (!res || !res.ok) { toast('Failed to save project.'); return; }
 
     toast(id ? 'Project updated!' : 'Project created!');
@@ -315,9 +345,16 @@
   };
 
   window.deleteCategory = async function (id) {
-    if (!confirm('Delete this category? Projects in it will be uncategorized.')) return;
-    const res = await api(`/categories/${id}`, { method: 'DELETE' });
-    if (res !== null) { toast('Category deleted.'); loadCategories(); }
+    const c = categories.find(x => x.id === id);
+    showConfirm(
+      'Delete Category',
+      `Delete "${c?.name || 'this category'}"? Projects in it will be uncategorized.`,
+      'bi-tags',
+      async () => {
+        const res = await api(`/categories/${id}`, { method: 'DELETE' });
+        if (res !== null) { toast('Category deleted.'); loadCategories(); }
+      }
+    );
   };
 
   document.getElementById('saveCategoryBtn')?.addEventListener('click', async () => {
@@ -404,20 +441,34 @@
   });
 
   document.getElementById('deleteMsgBtn')?.addEventListener('click', async () => {
-    if (!currentMsg || !confirm('Delete this message?')) return;
-    const res = await api(`/contact/messages/${currentMsg.id}`, { method: 'DELETE' });
-    if (res !== null) {
-      toast('Message deleted.');
-      closeModal('messageModal');
-      messages = messages.filter(m => m.id !== currentMsg.id);
-      renderMessagesTable();
-    }
+    if (!currentMsg) return;
+    showConfirm(
+      'Delete Message',
+      `Delete message from "${currentMsg.full_name}"? This cannot be undone.`,
+      'bi-envelope-x',
+      async () => {
+        const res = await api(`/contact/messages/${currentMsg.id}`, { method: 'DELETE' });
+        if (res !== null) {
+          toast('Message deleted.');
+          closeModal('messageModal');
+          messages = messages.filter(m => m.id !== currentMsg.id);
+          renderMessagesTable();
+        }
+      }
+    );
   });
 
   window.deleteMsg = async function (id) {
-    if (!confirm('Delete this message?')) return;
-    const res = await api(`/contact/messages/${id}`, { method: 'DELETE' });
-    if (res !== null) { toast('Message deleted.'); messages = messages.filter(m => m.id !== id); renderMessagesTable(); }
+    const m = messages.find(x => x.id === id);
+    showConfirm(
+      'Delete Message',
+      `Delete message from "${m?.full_name || 'this sender'}"? This cannot be undone.`,
+      'bi-envelope-x',
+      async () => {
+        const res = await api(`/contact/messages/${id}`, { method: 'DELETE' });
+        if (res !== null) { toast('Message deleted.'); messages = messages.filter(m => m.id !== id); renderMessagesTable(); }
+      }
+    );
   };
 
   // ── Init ──────────────────────────────────────────────────

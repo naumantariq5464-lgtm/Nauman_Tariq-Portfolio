@@ -439,3 +439,20 @@ html, body { height: 100%; font-family: var(--font); background: var(--gray-bg);
   .admin-header { padding: 0 16px; }
   .stats-grid { grid-template-columns: 1fr 1fr; }
 }
+
+/* ── Confirm Delete Popup ── */
+.confirm-icon-wrap {
+  width: 64px;
+  height: 64px;
+  background: #fff5f5;
+  border: 2px solid #fed7d7;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+.confirm-icon-i {
+  font-size: 1.6rem;
+  color: #c53030;
+}
