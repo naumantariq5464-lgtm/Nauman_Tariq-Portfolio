@@ -217,8 +217,8 @@ section, footer, nav, header, div {
   background-position: center center;
   background-repeat: no-repeat;
   opacity: 0.10;
-  filter: blur(3px);
-  transform: scale(1.05); /* prevents blur edge white gaps */
+  filter: blur(1px);
+  transform: scale(1.02); /* prevents blur edge white gaps */
   z-index: 0;
   pointer-events: none;
 }
